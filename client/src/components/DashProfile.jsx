@@ -14,7 +14,6 @@ const DashProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type and size
       if (!file.type.match("image.*")) {
         setUploadError("Please select an image file");
         return;
@@ -59,17 +58,11 @@ const DashProfile = () => {
         throw new Error(data.message || "Image upload failed");
       }
 
-      // Update the displayed image URL with the Cloudinary URL
       setImageFileURL(data.secure_url);
       setUploadSuccess("Profile picture uploaded successfully!");
-
-      // Here you would typically update the user's profile picture in your database
-      // For example:
-      // await updateUserProfile(currentUser._id, { profilePicture: data.secure_url });
     } catch (error) {
       console.error("Upload error:", error);
       setUploadError(error.message);
-      // Revert to previous image if upload fails
       setImageFileURL(currentUser.profilePicture);
     } finally {
       setIsUploading(false);
