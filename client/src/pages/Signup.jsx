@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { useState } from "react";
 import { Spinner } from "flowbite-react";
 import OAuth from "../components/OAuth";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +30,10 @@ const Signup = () => {
     setUserNameError("");
 
     if (!email || !userName || !password || !checkbox) {
-      return setError("Please fill up all the fields.");
+      const errorMsg = "Please fill up all the fields.";
+      setError(errorMsg);
+      toast.error(errorMsg);
+      return;
     }
 
     const formData = {
@@ -54,17 +58,24 @@ const Signup = () => {
 
         if (msg.includes("E11000")) {
           if (msg.includes("email")) {
-            setEmailError("Email already exists.");
+            const errorMsg = "Email already exists.";
+            setEmailError(errorMsg);
+            toast.error(errorMsg);
           } else if (msg.includes("username")) {
-            setUserNameError("Username already exists.");
+            const errorMsg = "Username already exists.";
+            setUserNameError(errorMsg);
+            toast.error(errorMsg);
           } else {
             setError(msg);
+            toast.error(msg);
           }
+          return;
         } else {
           setError(msg);
+          toast.error(msg);
         }
       } else {
-        alert("✅ Signup successful");
+        toast.success("Signup successful!");
         setEmail("");
         setUserName("");
         setPassword("");
@@ -72,14 +83,14 @@ const Signup = () => {
         navigate("/sign-in");
       }
     } catch (err) {
-      alert("🚫 Network error: " + err.message);
+      toast.error("🚫 Network error: " + err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 max-w-screen grid place-content-center pt-15 dark:bg-teal-950  text-black transition-all ease-in-out duration-300 dark:text-white">
+    <div className="min-h-screen bg-gray-100 max-w-screen grid place-content-center pt-15 dark:bg-gray-900  text-black transition-all ease-in-out duration-300 dark:text-white">
       <div className="grid justify-center h-full gap-8 md:gap-16 grid-cols-1 lg:grid-cols-2 container p-4">
         <img
           className="rounded-[8px] order-2 lg:order-1 mx-auto self-center max-w-full lg:max-w-full"
@@ -87,8 +98,8 @@ const Signup = () => {
           alt="illustration"
         />
 
-        <div className="h-full max-w-lg justify-center mx-auto bg-gray-200 dark:bg-gray-950 p-4 px-8 lg:px-16 items-center order-1 lg:order-2 shadow-xl rounded-2xl">
-          <h1 className="text-center text-4xl mt-4 mb-2">Sign Up</h1>
+        <div className="h-full max-w-lg justify-center mx-auto bg-gray-200 dark:bg-gray-800 p-4 px-8 lg:px-16 items-center order-1 lg:order-2 shadow-xl rounded-2xl">
+          <h1 className="text-center text-4xl mt-4 mb-2">Create Account</h1>
           <h3 className="text-gray-500 mb-8 dark:text-gray-400 text-center">
             Join our community and start something awesome.
           </h3>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Spinner } from "flowbite-react";
@@ -9,6 +9,7 @@ import {
 } from "../redux/user/userSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import OAuth from "../components/OAuth.jsx";
+import { toast } from "react-toastify";
 
 const Signin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +19,14 @@ const Signin = () => {
   const { loading: isLoading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      // Clear the error after showing the toast
+      dispatch(signInFailure(null));
+    }
+  }, [error, dispatch]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +50,7 @@ const Signin = () => {
       }
 
       if (res.ok) {
-        alert("✅ Login successful");
+        toast.success("Login successful!");
         dispatch(signInSuccess(data));
         navigate("/");
       }
@@ -63,13 +72,6 @@ const Signin = () => {
               Welcome back! Please enter your details.
             </p>
           </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
@@ -157,7 +159,7 @@ const Signin = () => {
                 to="/sign-up"
                 className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
               >
-                Sign up
+                Create New Account
               </Link>
             </div>
 
