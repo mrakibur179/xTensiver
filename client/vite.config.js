@@ -13,7 +13,7 @@ export default defineConfig({
       },
     },
     host: true, // or '0.0.0.0'
-    allowedHosts: ["9235-220-152-113-171.ngrok-free.app"],
+    allowedHosts: ["7370-220-152-113-173.ngrok-free.app"],
   },
   plugins: [react(), tailwindcss(), flowbiteReact()],
 });

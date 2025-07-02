@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import {
+  updateStart,
+  updateSuccess,
+  updateFailure,
+} from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
 
 const DashProfile = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -10,6 +16,11 @@ const DashProfile = () => {
   const [uploadSuccess, setUploadSuccess] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const filePickerRef = useRef();
+  const dispatch = useDispatch();
+
+  const [username, setUsername] = useState(currentUser.username);
+  const [email, setEmail] = useState(currentUser.email);
+  const [password, setPassword] = useState("");
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -70,6 +81,41 @@ const DashProfile = () => {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    dispatch(updateStart());
+
+    try {
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // if you're using cookies
+        body: JSON.stringify({
+          username,
+          email,
+          password: password || undefined, // avoid sending empty password
+          profilePicture: imageFileURL,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Update failed");
+      }
+
+      dispatch(updateSuccess(data));
+      setUploadSuccess("Profile updated successfully!");
+    } catch (error) {
+      console.error("Update error:", error);
+      dispatch(updateFailure(error.message));
+      setUploadError(error.message);
+    }
+  };
+
   return (
     <div className="max-w-md mt-4 mx-auto p-6 rounded-lg overflow-hidden">
       <div className="text-center mb-8">
@@ -89,7 +135,7 @@ const DashProfile = () => {
         </div>
       )}
 
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleSubmit}>
         <input
           type="file"
           accept="image/*"
@@ -104,7 +150,7 @@ const DashProfile = () => {
               className={`rounded-full w-full h-full object-cover border-4 border-white shadow-lg transition-transform duration-300 group-hover:scale-105 group-active:scale-105 ${
                 isUploading ? "opacity-70" : ""
               }`}
-              src={imageFileURL}
+              src={imageFileURL || currentUser.profilePicture}
               alt="Profile"
             />
             <div
@@ -145,8 +191,10 @@ const DashProfile = () => {
             <input
               type="text"
               id="username"
-              defaultValue={currentUser.username}
+              placeholder={currentUser.username}
               className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
 
@@ -157,8 +205,10 @@ const DashProfile = () => {
             <input
               type="email"
               id="email"
-              defaultValue={currentUser.email}
+              placeholder={currentUser.email}
               className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -174,6 +224,9 @@ const DashProfile = () => {
               id="password"
               placeholder="Enter new password"
               className="w-full px-4 py-2.5 text-gray-500 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="off"
             />
           </div>
         </div>

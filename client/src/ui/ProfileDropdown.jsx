@@ -39,7 +39,7 @@ const ProfileDropdown = ({
             exit="hidden"
             variants={dropdownVariants}
             transition={{ duration: 0.2 }}
-            onClick={(e) => e.stopPropagation()} // Prevents dropdown from closing when clicking inside
+            style={{ pointerEvents: "auto" }}
             className="absolute right-0 mt-2 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700"
           >
             <div className="px-4 min-w-max py-2 border-b border-gray-100 dark:border-gray-700">
@@ -52,22 +52,31 @@ const ProfileDropdown = ({
             </div>
             <Link
               to="/dashboard"
+              onClick={(e) => {
+                e.stopPropagation();
+                setDropdownOpen(false);
+              }}
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-              onClick={() => setDropdownOpen(false)}
             >
               Dashboard
             </Link>
             <Link
               to="/settings"
+              onClick={(e) => {
+                e.stopPropagation();
+                setDropdownOpen(false);
+              }}
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-              onClick={() => setDropdownOpen(false)}
             >
               Settings
             </Link>
             <Link
               to="/logout"
+              onClick={(e) => {
+                e.stopPropagation();
+                setDropdownOpen(false);
+              }}
               className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
-              onClick={() => setDropdownOpen(false)}
             >
               Sign out
             </Link>
