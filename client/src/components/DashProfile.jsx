@@ -7,8 +7,6 @@ import {
 } from "../redux/user/userSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { CircularProgressbar } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 
 const DashProfile = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -21,7 +19,6 @@ const DashProfile = () => {
   const [password, setPassword] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imageFileURL, setImageFileURL] = useState(currentUser.profilePicture);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [lastUploadedFileSize, setLastUploadedFileSize] = useState(null);
 
@@ -88,7 +85,6 @@ const DashProfile = () => {
   const uploadImage = async () => {
     try {
       setIsUploading(true);
-      setUploadProgress(0);
 
       const formData = new FormData();
       formData.append("file", imageFile);
@@ -99,12 +95,6 @@ const DashProfile = () => {
         {
           method: "POST",
           body: formData,
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(percentCompleted);
-          },
         }
       );
 
@@ -123,7 +113,6 @@ const DashProfile = () => {
       setImageFileURL(currentUser.profilePicture);
     } finally {
       setIsUploading(false);
-      setUploadProgress(0);
     }
   };
 
