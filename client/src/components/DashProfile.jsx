@@ -4,9 +4,14 @@ import {
   updateStart,
   updateSuccess,
   updateFailure,
+  deleteUserStart,
+  deleteUserFailure,
+  deleteUserSuccess,
 } from "../redux/user/userSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Button, Modal, ModalBody, ModalHeader } from "flowbite-react";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 const DashProfile = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -21,6 +26,28 @@ const DashProfile = () => {
   const [imageFileURL, setImageFileURL] = useState(currentUser.profilePicture);
   const [isUploading, setIsUploading] = useState(false);
   const [lastUploadedFileSize, setLastUploadedFileSize] = useState(null);
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleDeleteUser = async () => {
+    setOpenModal(false);
+
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        dispatch(deleteUserFailure(data.message));
+      } else {
+        dispatch(deleteUserSuccess(data));
+      }
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
 
   // Load size of current profile picture
   useEffect(() => {
@@ -259,6 +286,41 @@ const DashProfile = () => {
           </button>
         </div>
       </form>
+
+      <span className="flex justify-between pt-4">
+        <button
+          className="bg-orange-400 p-2 px-4 rounded-md"
+          onClick={() => setOpenModal(true)}
+        >
+          Delete Account
+        </button>
+        <button className="bg-red-400 p-2 px-4 rounded-md">Logout</button>
+      </span>
+
+      <Modal
+        show={openModal}
+        size="md"
+        onClose={() => setOpenModal(false)}
+        popup
+      >
+        <ModalHeader />
+        <ModalBody>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this account?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="red" onClick={handleDeleteUser}>
+                Yes, I'm sure
+              </Button>
+              <Button color="alternative" onClick={() => setOpenModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
     </div>
   );
 };
