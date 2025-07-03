@@ -90,8 +90,10 @@ const DashProfile = () => {
       formData.append("file", imageFile);
       formData.append("upload_preset", "xTensiver");
 
+      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+
       const response = await fetch(
-        `https://api.cloudinary.com/v1_1/dap9mz46e/image/upload`,
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         {
           method: "POST",
           body: formData,
