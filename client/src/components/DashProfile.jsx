@@ -7,6 +7,8 @@ import {
 } from "../redux/user/userSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 const DashProfile = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -97,6 +99,12 @@ const DashProfile = () => {
         {
           method: "POST",
           body: formData,
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentCompleted);
+          },
         }
       );
 
@@ -192,7 +200,7 @@ const DashProfile = () => {
                   : "bg-black/50 opacity-0 group-hover:opacity-100 cursor-pointer"
               }`}
             >
-              <span className="text-white text-sm font-medium">
+              <span className="text-white select-none text-sm font-medium">
                 {isUploading ? "Uploading..." : "Change"}
               </span>
             </div>
