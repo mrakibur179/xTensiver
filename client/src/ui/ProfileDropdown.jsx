@@ -1,6 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { signOutSuccess } from "../redux/user/userSlice";
+import { toast } from "react-toastify";
 
 const ProfileDropdown = ({
   currentUser,
@@ -11,6 +14,28 @@ const ProfileDropdown = ({
   const dropdownVariants = {
     hidden: { y: -10, opacity: 0 },
     visible: { y: 0, opacity: 1 },
+  };
+
+  const dispatch = useDispatch();
+
+  const handleSignOut = async (e) => {
+    e.stopPropagation();
+    setDropdownOpen(false);
+    try {
+      const res = await fetch(`/api/user/signout`, {
+        method: "POST",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOutSuccess());
+        toast.success("Signed out successfully!");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -61,21 +86,7 @@ const ProfileDropdown = ({
               Dashboard
             </Link>
             <Link
-              to="/settings"
-              onClick={(e) => {
-                e.stopPropagation();
-                setDropdownOpen(false);
-              }}
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-            >
-              Settings
-            </Link>
-            <Link
-              to="/logout"
-              onClick={(e) => {
-                e.stopPropagation();
-                setDropdownOpen(false);
-              }}
+              onClick={handleSignOut}
               className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
             >
               Sign out

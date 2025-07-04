@@ -17,7 +17,11 @@ import "react-toastify/dist/ReactToastify.css";
 const App = () => {
   return (
     <>
-      <ToastContainer position="top-right" className="mt-16" autoClose={3000} />
+      <ToastContainer
+        position="top-right"
+        className="pt-16 min-w-sm"
+        autoClose={3000}
+      />
       <ScrollToTop />
       <Header />
       <Routes>

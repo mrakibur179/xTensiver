@@ -7,6 +7,7 @@ import {
   deleteUserStart,
   deleteUserFailure,
   deleteUserSuccess,
+  signOutSuccess,
 } from "../redux/user/userSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -43,9 +44,30 @@ const DashProfile = () => {
         dispatch(deleteUserFailure(data.message));
       } else {
         dispatch(deleteUserSuccess(data));
+        toast.success("Account Deleted Successfully!");
       }
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
+    }
+  };
+
+  const handleSignOut = async () => {
+    setOpenModal(false);
+
+    try {
+      const res = await fetch(`/api/user/signout`, {
+        method: "POST",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOutSuccess());
+        toast.success("Signed out successfully!");
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -294,7 +316,12 @@ const DashProfile = () => {
         >
           Delete Account
         </button>
-        <button className="bg-red-400 p-2 px-4 rounded-md">Logout</button>
+        <button
+          className="bg-red-400 p-2 px-4 rounded-md"
+          onClick={handleSignOut}
+        >
+          Logout
+        </button>
       </span>
 
       <Modal
