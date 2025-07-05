@@ -10,7 +10,7 @@ import {
   signOutSuccess,
 } from "../redux/user/userSlice";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Modal, ModalBody, ModalHeader } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
@@ -139,10 +139,12 @@ const DashProfile = () => {
       formData.append("file", imageFile);
       formData.append("upload_preset", "xTensiver");
 
-      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+      // const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
       const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        }/image/upload`,
         {
           method: "POST",
           body: formData,
@@ -311,13 +313,13 @@ const DashProfile = () => {
 
       <span className="flex justify-between pt-4">
         <button
-          className="bg-orange-400 p-2 px-4 rounded-md"
+          className="bg-orange-400 cursor-pointer p-2 px-4 rounded-md"
           onClick={() => setOpenModal(true)}
         >
           Delete Account
         </button>
         <button
-          className="bg-red-400 p-2 px-4 rounded-md"
+          className="bg-red-400 p-2 cursor-pointer px-4 rounded-md"
           onClick={handleSignOut}
         >
           Logout
@@ -338,10 +340,18 @@ const DashProfile = () => {
               Are you sure you want to delete this account?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="red" onClick={handleDeleteUser}>
+              <Button
+                color="red"
+                onClick={handleDeleteUser}
+                className="cursor-pointer"
+              >
                 Yes, I'm sure
               </Button>
-              <Button color="alternative" onClick={() => setOpenModal(false)}>
+              <Button
+                className="cursor-pointer"
+                color="alternative"
+                onClick={() => setOpenModal(false)}
+              >
                 No, cancel
               </Button>
             </div>

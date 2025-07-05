@@ -10,9 +10,11 @@ import Contact from "./pages/Contact";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 import NotFound from "./pages/NotFound";
-import PrivateRoute from "./components/PrivateRoute";
+import { PrivateRoute } from "./components/PrivateRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CreatePost from "./pages/CreatePost";
+import { OnlyAdminPrivateRoute } from "./components/OnlyAdminPrivateRoute";
 
 const App = () => {
   return (
@@ -27,6 +29,9 @@ const App = () => {
         <Route path="/sign-up" element={<Signup />} />
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route element={<OnlyAdminPrivateRoute />}>
+          <Route path="/create-post" element={<CreatePost />} />
         </Route>
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/contact" element={<Contact />} />
