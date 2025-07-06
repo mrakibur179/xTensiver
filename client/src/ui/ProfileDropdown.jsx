@@ -76,7 +76,7 @@ const ProfileDropdown = ({
               </p>
             </div>
             <Link
-              to="/dashboard"
+              to="/dashboard?tab=profile"
               onClick={(e) => {
                 e.stopPropagation();
                 setDropdownOpen(false);

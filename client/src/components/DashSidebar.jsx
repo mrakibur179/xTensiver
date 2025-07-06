@@ -6,7 +6,7 @@ import {
   SidebarItems,
 } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiChartPie, HiTable } from "react-icons/hi";
+import { HiChartPie, HiDocumentText, HiTable } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { signOutSuccess } from "../redux/user/userSlice";
@@ -54,24 +54,43 @@ const DashSidebar = () => {
       <SidebarItems>
         <SidebarItemGroup className="flex flex-col gap-1">
           <Link to="/dashboard?tab=profile">
-            <SidebarItem as="div" icon={HiChartPie} active={tab === "profile"}>
+            <SidebarItem
+              as="div"
+              icon={HiChartPie}
+              label={currentUser.isAdmin ? "Admin" : "User"}
+              active={tab === "profile"}
+            >
               Profile
             </SidebarItem>
           </Link>
 
           {currentUser.isAdmin && (
-            <Link to="/create-post">
-              <SidebarItem as="div" icon={HiTable}>
-                Create Post
-              </SidebarItem>
-            </Link>
+            <>
+              <Link to="/create-post">
+                <SidebarItem as="div" icon={HiTable}>
+                  Create Post
+                </SidebarItem>
+              </Link>
+
+              <Link to="/dashboard?tab=posts">
+                <SidebarItem
+                  as="div"
+                  icon={HiDocumentText}
+                  active={tab === "posts"}
+                >
+                  Posts
+                </SidebarItem>
+              </Link>
+            </>
           )}
 
-          <Link onClick={handleSignOut}>
-            <SidebarItem icon={ArrowRightIcon} as="div">
-              Sign Out
-            </SidebarItem>
-          </Link>
+          <SidebarItem
+            icon={ArrowRightIcon}
+            onClick={handleSignOut}
+            className="cursor-pointer"
+          >
+            Sign Out
+          </SidebarItem>
         </SidebarItemGroup>
       </SidebarItems>
     </Sidebar>
