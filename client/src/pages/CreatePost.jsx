@@ -3,7 +3,7 @@ import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./CreatePost.css";
 
 const CreatePost = () => {
@@ -13,6 +13,7 @@ const CreatePost = () => {
   const [isUploadingPoster, setIsUploadingPoster] = useState(false);
   const [isUploadingEditorImage, setIsUploadingEditorImage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const [category, setCategory] = useState("");
   const categories = [
@@ -99,10 +100,10 @@ const CreatePost = () => {
     formData.append("file", file);
     formData.append("upload_preset", "xTensiver");
 
-    console.log("FormData entries:");
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // console.log("FormData entries:");
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${
@@ -191,17 +192,34 @@ const CreatePost = () => {
         category,
       };
 
-      console.log("New Post:", postData);
-      toast.success("Post published!");
+      const response = await fetch(`/api/post/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Authorization: `Bearer ${access_token}`,
+        },
+        credentials: "include",
+        body: JSON.stringify(postData),
+      });
 
-      // Reset
+      const data = await response.json();
+      if (!response.ok) {
+        // const errorData = await response.json();
+        throw new Error(data.message || "Failed to create post");
+      }
+
+      toast.success("Post published!");
+      navigate(`/post/${data.slug}`);
+
+      // Reset form
       setTitle("");
       setDescription("");
       setPosterURL("");
+      setCategory("");
       quill.root.innerHTML = "";
     } catch (err) {
-      console.log(err);
-      toast.error("Failed to create post");
+      console.error(err);
+      toast.error(err.message || "Failed to create post");
     } finally {
       setIsSubmitting(false);
     }
