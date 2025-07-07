@@ -104,65 +104,74 @@ export const DashPost = () => {
         </div>
       ) : currentUser.isAdmin && userPosts.length > 0 ? (
         <div className="overflow-x-auto p-4">
-          <Table hoverable className="p-2">
+          <Table hoverable className="w-full p-2">
             <TableHead>
               <TableRow>
-                <TableHeadCell className="min-w-full truncate">
+                <TableHeadCell className="w-48 whitespace-nowrap px-4 py-3">
                   Updated At
                 </TableHeadCell>
-                <TableHeadCell className="min-w-full truncate">
+                <TableHeadCell className="min-w-48 px-2 py-3 truncate">
                   Post Image
                 </TableHeadCell>
-                <TableHeadCell className="min-w-full truncate">
+                <TableHeadCell className="min-w-[200px] max-w-[240px] px-4 py-3">
                   Post Title
                 </TableHeadCell>
-                <TableHeadCell>Category</TableHeadCell>
-                <TableHeadCell>Edit</TableHeadCell>
-                <TableHeadCell>Delete</TableHeadCell>
+                <TableHeadCell className="w-32 whitespace-nowrap px-4 py-3">
+                  Category
+                </TableHeadCell>
+                <TableHeadCell className="w-20 px-2 py-3">Edit</TableHeadCell>
+                <TableHeadCell className="w-20 px-2 py-3">Delete</TableHeadCell>
               </TableRow>
             </TableHead>
 
-            <TableBody className="divide-y">
+            <TableBody className="divide-y dark:bg-slate-900 bg-sky-100">
               {userPosts.map((post) => (
-                <TableRow key={post._id}>
-                  <TableCell className="min-w-full truncate">
+                <TableRow
+                  key={post._id}
+                  className="hover:bg-sky-200 dark:hover:bg-slate-950"
+                >
+                  <TableCell className="w-48 whitespace-nowrap px-4 py-2">
                     {new Date(post.updatedAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
                     })}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="w-48 px-2 py-2">
                     <Link to={`/post/${post.slug}`}>
                       <img
                         src={post.poster}
                         alt={post.title}
-                        className="w-20 h-10 object-cover rounded"
+                        className="w-32 h-16 object-cover rounded"
                       />
                     </Link>
                   </TableCell>
-                  <TableCell className="min-w-full truncate">
-                    <Link to={`/post/${post.slug}`} className="underline">
+                  <TableCell className="min-w-[200px] max-w-[300px] truncate px-4 py-2">
+                    <Link
+                      to={`/post/${post.slug}`}
+                      className="underline text-xl hover:text-blue-600 truncate inline-block max-w-full"
+                    >
                       {post.title}
                     </Link>
                   </TableCell>
-                  <TableCell>{post.category}</TableCell>
-
-                  <TableCell>
+                  <TableCell className="w-32 whitespace-nowrap px-4 py-2">
+                    {post.category}
+                  </TableCell>
+                  <TableCell className="w-20 px-2 py-2">
                     <Link
-                      to={`/update-post/${currentUser._id}`}
-                      className="text-blue-500 hover:underline cursor-pointer"
+                      to={`/update-post/${post._id}`}
+                      className="text-blue-500 hover:underline cursor-pointer whitespace-nowrap"
                     >
                       Edit
                     </Link>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="w-20 px-2 py-2">
                     <span
                       onClick={() => {
                         setOpenModal(true);
                         setPostIdToDelete(post._id);
                       }}
-                      className="text-red-500 hover:underline cursor-pointer"
+                      className="text-red-500 hover:underline cursor-pointer whitespace-nowrap"
                     >
                       Delete
                     </span>
@@ -173,12 +182,14 @@ export const DashPost = () => {
           </Table>
 
           {showMore && (
-            <button
-              onClick={handleShowMore}
-              className="w-full self-center px-4 text-teal-200 cursor-pointer hover:underline py-7"
-            >
-              Show More
-            </button>
+            <div className="w-full p-4">
+              <button
+                onClick={handleShowMore}
+                className="text-teal-50 hover:shadow-2xl rounded-md mx-auto p-2 content-center px-4 bg-blue-600 flex items-center dark:text-gray-50 cursor-pointer"
+              >
+                Show More...
+              </button>
+            </div>
           )}
         </div>
       ) : (
