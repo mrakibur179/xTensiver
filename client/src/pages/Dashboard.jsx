@@ -23,7 +23,7 @@ const Dashboard = () => {
         <div className="md:w-56">
           <DashSidebar />
         </div>
-        <div className="w-full">
+        <div className="w-full overflow-x-hidden">
           {tab === "profile" && <DashProfile />}
           {tab === "posts" && <DashPost />}
         </div>
