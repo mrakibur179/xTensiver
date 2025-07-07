@@ -1,4 +1,8 @@
 import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalHeader,
   Spinner,
   Table,
   TableBody,
@@ -8,6 +12,7 @@ import {
   TableRow,
 } from "flowbite-react";
 import { useEffect, useState } from "react";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -17,6 +22,8 @@ export const DashPost = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [showMore, setShowMore] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState("");
 
   // console.log(userPosts);
 
@@ -66,6 +73,29 @@ export const DashPost = () => {
     }
   };
 
+  const handleDeletePost = async () => {
+    setOpenModal(false);
+    try {
+      const res = await fetch(
+        `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        setUserPosts((prev) =>
+          prev.filter((post) => post._id !== postIdToDelete)
+        );
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="table-auto md:mx-auto scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-600 dark:scrollbar-thumb-slate-800">
       {isLoading ? (
@@ -83,10 +113,12 @@ export const DashPost = () => {
                 <TableHeadCell className="min-w-full truncate">
                   Post Image
                 </TableHeadCell>
-                <TableHeadCell>Post Title</TableHeadCell>
+                <TableHeadCell className="min-w-full truncate">
+                  Post Title
+                </TableHeadCell>
                 <TableHeadCell>Category</TableHeadCell>
-                <TableHeadCell>Delete</TableHeadCell>
                 <TableHeadCell>Edit</TableHeadCell>
+                <TableHeadCell>Delete</TableHeadCell>
               </TableRow>
             </TableHead>
 
@@ -115,11 +147,7 @@ export const DashPost = () => {
                     </Link>
                   </TableCell>
                   <TableCell>{post.category}</TableCell>
-                  <TableCell>
-                    <span className="text-red-500 hover:underline cursor-pointer">
-                      Delete
-                    </span>
-                  </TableCell>
+
                   <TableCell>
                     <Link
                       to={`/update-post/${currentUser._id}`}
@@ -127,6 +155,17 @@ export const DashPost = () => {
                     >
                       Edit
                     </Link>
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      onClick={() => {
+                        setOpenModal(true);
+                        setPostIdToDelete(post._id);
+                      }}
+                      className="text-red-500 hover:underline cursor-pointer"
+                    >
+                      Delete
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}
@@ -152,6 +191,38 @@ export const DashPost = () => {
           </h1>
         </>
       )}
+      <Modal
+        show={openModal}
+        size="md"
+        onClose={() => setOpenModal(false)}
+        popup
+      >
+        <ModalHeader />
+        <ModalBody>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this account?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                color="red"
+                onClick={handleDeletePost}
+                className="cursor-pointer"
+              >
+                Yes, I'm sure
+              </Button>
+              <Button
+                className="cursor-pointer"
+                color="alternative"
+                onClick={() => setOpenModal(false)}
+              >
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
     </div>
   );
 };
