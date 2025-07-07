@@ -16,7 +16,9 @@ export const DashPost = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log(userPosts);
+  const [showMore, setShowMore] = useState(true);
+
+  // console.log(userPosts);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -24,10 +26,14 @@ export const DashPost = () => {
         // setIsLoading(true);
         const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
         const data = await res.json();
-        if (!res.ok) {
-          console.log(data);
-        } else {
+
+        if (res.ok) {
           setUserPosts(data.posts);
+          if (data.posts.length < 9) {
+            setShowMore(false);
+          }
+        } else {
+          console.log(data);
         }
         setIsLoading(false);
       } catch (error) {
@@ -40,6 +46,25 @@ export const DashPost = () => {
       fetchPosts();
     }
   }, [currentUser.isAdmin, currentUser._id]);
+
+  const handleShowMore = async () => {
+    const startIndex = userPosts.length;
+
+    try {
+      const res = await fetch(
+        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setUserPosts((prev) => [...prev, ...data.posts]);
+        if (data.posts.length < 9) {
+          setShowMore(false);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="table-auto md:mx-auto scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-600 dark:scrollbar-thumb-slate-800">
@@ -96,17 +121,36 @@ export const DashPost = () => {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-blue-500 hover:underline cursor-pointer">
+                    <Link
+                      to={`/update-post/${currentUser._id}`}
+                      className="text-blue-500 hover:underline cursor-pointer"
+                    >
                       Edit
-                    </span>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+
+          {showMore && (
+            <button
+              onClick={handleShowMore}
+              className="w-full self-center px-4 text-teal-200 cursor-pointer hover:underline py-7"
+            >
+              Show More
+            </button>
+          )}
         </div>
       ) : (
-        <p>You don't have any post yet</p>
+        <>
+          <h1 className="text-left text-2xl p-4">
+            You don't have any post yet.
+            <span className="p-2 text-blue-800 underline cursor-pointer">
+              <Link to="/create-post">Create One</Link>
+            </span>
+          </h1>
+        </>
       )}
     </div>
   );
