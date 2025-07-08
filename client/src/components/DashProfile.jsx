@@ -303,7 +303,7 @@ const DashProfile = () => {
         <div className="pt-2">
           <button
             type="submit"
-            disabled={isUploading || !isChanged}
+            disabled={isUploading}
             className="w-full cursor-pointer bg-gradient-to-r from-indigo-600 to-indigo-500 text-white py-3 px-4 rounded-lg font-medium hover:from-indigo-700 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isUploading ? "Processing..." : "Click To Update Profile"}
