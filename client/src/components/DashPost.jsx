@@ -124,11 +124,11 @@ export const DashPost = () => {
               </TableRow>
             </TableHead>
 
-            <TableBody className="divide-y dark:bg-slate-900 bg-sky-100">
+            <TableBody className="divide-y dark:bg-slate-900 bg-slate-100">
               {userPosts.map((post) => (
                 <TableRow
                   key={post._id}
-                  className="hover:bg-sky-200 dark:hover:bg-slate-950"
+                  className="hover:bg-sky-100 dark:hover:bg-slate-950/50"
                 >
                   <TableCell className="w-48 whitespace-nowrap px-4 py-2">
                     {new Date(post.updatedAt).toLocaleDateString("en-US", {
@@ -213,7 +213,7 @@ export const DashPost = () => {
           <div className="text-center">
             <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
             <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete this account?
+              Are you sure you want to delete this post?
             </h3>
             <div className="flex justify-center gap-4">
               <Button

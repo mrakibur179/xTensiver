@@ -4,6 +4,7 @@ import "quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import "./CreatePost.css";
 
 const UpdatePost = () => {
@@ -15,6 +16,8 @@ const UpdatePost = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { postId } = useParams();
+
+  const { currentUser } = useSelector((state) => state.user);
 
   const [category, setCategory] = useState("");
   const categories = [
@@ -224,15 +227,18 @@ const UpdatePost = () => {
         category,
       };
 
-      const response = await fetch(`/api/post/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Authorization: `Bearer ${access_token}`,
-        },
-        credentials: "include",
-        body: JSON.stringify(postData),
-      });
+      const response = await fetch(
+        `/api/post/updatepost/${postId}/${currentUser._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${access_token}`,
+          },
+          credentials: "include",
+          body: JSON.stringify(postData),
+        }
+      );
 
       const data = await response.json();
       if (!response.ok) {
@@ -267,7 +273,7 @@ const UpdatePost = () => {
       </Link>
 
       <h1 className="text-3xl font-bold mb-8 mt-8 text-gray-900 dark:text-gray-100">
-        Create New Post
+        Update Post
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -401,7 +407,7 @@ const UpdatePost = () => {
             {isSubmitting ? (
               <BeatLoader size={8} color="#ffffff" />
             ) : (
-              "Publish Post"
+              "Update Post"
             )}
           </button>
         </div>
