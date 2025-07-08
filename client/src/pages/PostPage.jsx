@@ -62,11 +62,15 @@ export const PostPage = () => {
         <img
           src={post.poster}
           alt={post.title}
-          className="w-full h-full object-cover rounded-md mb-6 shadow"
+          className="w-2/3 h-full mx-auto object-cover rounded-md mb-6 shadow"
         />
       )}
 
       <p className="text-lg leading-relaxed mb-10">{post.description}</p>
+
+      <hr />
+
+      <br />
 
       <div
         className="prose prose-sm sm:prose-base dark:prose-invert max-w-none break-words overflow-x-hidden"

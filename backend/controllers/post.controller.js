@@ -107,7 +107,12 @@ export const updatepost = async (req, res, next) => {
           description: req.body.description,
           content: req.body.content,
           category: req.body.category,
-          image: req.body.image,
+          poster: req.body.poster,
+          slug: req.body.title
+            .split(" ")
+            .join("-")
+            .toLowerCase()
+            .replace(/[^a-zA-Z0-9-]/g, "-"),
         },
       },
       { new: true }

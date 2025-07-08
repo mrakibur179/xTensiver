@@ -234,6 +234,7 @@ const Header = () => {
                       {item.title}
                     </NavLink>
                   ))}
+
                   <div className="self-center">
                     <ThemeTogglerButton />
                   </div>
