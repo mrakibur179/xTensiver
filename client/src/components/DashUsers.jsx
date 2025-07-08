@@ -56,7 +56,7 @@ export const DashUsers = () => {
     const startIndex = users.length;
 
     try {
-      const res = await fetch(`/api/users/getusers?startIndex=${startIndex}`);
+      const res = await fetch(`/api/users/getusers&startIndex=${startIndex}`);
       const data = await res.json();
       if (res.ok) {
         setUsers((prev) => [...prev, ...data.users]);

@@ -57,7 +57,7 @@ export const DashPost = () => {
 
     try {
       const res = await fetch(
-        `/api/post/getposts?userId=${currentUser._id}?startIndex=${startIndex}`
+        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
       );
       const data = await res.json();
       if (res.ok) {
@@ -104,7 +104,7 @@ export const DashPost = () => {
         <div className="overflow-x-auto p-4">
           <Table hoverable className="w-full p-2">
             <TableHead>
-              <TableRow>
+              <TableRow className="bg-gray-400">
                 <TableHeadCell className="w-48 whitespace-nowrap px-4 py-3">
                   Updated At
                 </TableHeadCell>
@@ -147,7 +147,7 @@ export const DashPost = () => {
                   <TableCell className="min-w-[200px] max-w-[300px] truncate px-4 py-2">
                     <Link
                       to={`/post/${post.slug}`}
-                      className="underline text-xl hover:text-blue-600 truncate inline-block max-w-full"
+                      className="hover:underline text-xl hover:text-blue-600 truncate inline-block max-w-full"
                     >
                       {post.title}
                     </Link>
@@ -183,7 +183,7 @@ export const DashPost = () => {
             <div className="w-full p-4">
               <button
                 onClick={handleShowMore}
-                className="text-teal-50 hover:shadow-2xl rounded-md mx-auto p-2 content-center px-4 bg-blue-600 flex items-center dark:text-gray-50 cursor-pointer"
+                className="text-teal-50 rounded-md mx-auto p-2 content-center px-4 bg-blue-600 flex items-center dark:text-gray-50 cursor-pointer"
               >
                 Show More...
               </button>
