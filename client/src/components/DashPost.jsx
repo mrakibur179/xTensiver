@@ -147,7 +147,7 @@ export const DashPost = () => {
                   <TableCell className="min-w-[200px] max-w-[300px] truncate px-4 py-2">
                     <Link
                       to={`/post/${post.slug}`}
-                      className="hover:underline text-xl hover:text-blue-600 truncate inline-block max-w-full"
+                      className="hover:underline hover:text-blue-600 truncate inline-block max-w-full"
                     >
                       {post.title}
                     </Link>

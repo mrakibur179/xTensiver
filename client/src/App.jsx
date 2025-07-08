@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import CreatePost from "./pages/CreatePost";
 import { OnlyAdminPrivateRoute } from "./components/OnlyAdminPrivateRoute";
 import UpdatePost from "./pages/UpdatePost";
+import { PostPage } from "./pages/PostPage";
 
 const App = () => {
   return (
@@ -37,6 +38,7 @@ const App = () => {
         </Route>
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/post/:postSlug" element={<PostPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
