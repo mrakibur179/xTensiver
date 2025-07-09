@@ -1,8 +1,31 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @plugin 'tailwind-scrollbar';
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @plugin "flowbite-react/plugin/tailwindcss";
 @source "../.flowbite-react/class-list.json";
 
-@custom-variant dark (&:where(.dark, .dark *));
+.prose ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
+
+.prose ol ol {
+  list-style-type: lower-alpha;
+}
+
+.prose ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.ql-editor pre {
+  background-color: #1e293b; /* or any dark bg */
+  color: #f8fafc;
+  padding: 1em;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  font-family: "Fira Code", monospace;
+}

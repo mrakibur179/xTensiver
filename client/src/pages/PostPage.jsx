@@ -72,10 +72,14 @@ export const PostPage = () => {
 
       <br />
 
-      <div
-        className="prose prose-sm sm:prose-base dark:prose-invert max-w-none break-words overflow-x-hidden"
+      {/* <article
+        className="prose prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert"
         dangerouslySetInnerHTML={{ __html: post.content }}
-      />
+      /> */}
+
+      <div className="ql-editor prose prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert">
+        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+      </div>
     </div>
   );
 };

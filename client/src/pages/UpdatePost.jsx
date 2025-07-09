@@ -35,6 +35,7 @@ const UpdatePost = () => {
         ["bold", "italic", "underline", "strike"],
         [{ color: [] }, { background: [] }],
         [{ list: "ordered" }, { list: "bullet" }],
+        [{ indent: "-1" }, { indent: "+1" }],
         ["link", "image"],
         ["clean"],
       ],
