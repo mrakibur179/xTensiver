@@ -21,7 +21,11 @@ import { PostPage } from "./pages/PostPage";
 const App = () => {
   return (
     <>
-      <ToastContainer position="top-right" className="mt-16" autoClose={3000} />
+      <ToastContainer
+        position="top-center"
+        className="mt-16"
+        autoClose={2000}
+      />
       <ScrollToTop />
       <Header />
       <Routes>

@@ -24,7 +24,7 @@ const Dashboard = () => {
         <div className="md:w-56">
           <DashSidebar />
         </div>
-        <div className="w-full pr-4 lg:pr-0">
+        <div className="w-full overflow-x-hidden pr-4 lg:pr-0">
           {tab === "profile" && <DashProfile />}
           {tab === "posts" && <DashPost />}
           {tab === "users" && <DashUsers />}

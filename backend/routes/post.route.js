@@ -6,12 +6,23 @@ import {
   getposts,
   updatepost,
 } from "../controllers/post.controller.js";
+import { fetchCurrentUser } from "../utils/fetchCurrentUser.js";
 
 const router = express.Router();
 
-router.post("/create", verifyToken, create);
+router.post("/create", verifyToken, fetchCurrentUser, create);
 router.get("/getposts", getposts);
-router.delete("/deletepost/:postId/:userId", verifyToken, deletepost);
-router.put("/updatepost/:postId/:userId", verifyToken, updatepost);
+router.delete(
+  "/deletepost/:postId/:userId",
+  verifyToken,
+  fetchCurrentUser,
+  deletepost
+);
+router.put(
+  "/updatepost/:postId/:userId",
+  verifyToken,
+  fetchCurrentUser,
+  updatepost
+);
 
 export default router;

@@ -48,27 +48,37 @@ export const PostPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-20 text-gray-800 dark:text-gray-200 overflow-x-hidden">
-      <h1 className="text-3xl sm:text-4xl font-bold mb-4">{post.title}</h1>
-
-      <div className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-        <span className="mr-2">Category:</span>
-        <span className="font-medium">{post.category}</span> •{" "}
-        <span>
-          {new Date(post.updatedAt || post.createdAt).toLocaleDateString()}
-        </span>
-      </div>
+      <span className="py-4">Home > post > {postSlug}</span>
 
       {post.poster && (
         <img
           src={post.poster}
           alt={post.title}
-          className="w-2/3 h-full mx-auto object-cover rounded-md mb-6 shadow"
+          className="w-1/2 h-full mt-4 mx-auto object-cover rounded-md mb-6 shadow"
         />
       )}
 
-      <p className="text-lg leading-relaxed mb-10">{post.description}</p>
+      <h1 className="text-3xl sm:text-4xl font-bold px-4">{post.title}</h1>
+      <p className="text-sm leading-relaxed mb-2 px-4 text-gray-400">
+        {post.description}
+      </p>
 
-      <hr />
+      <div className="text-sm text-gray-500 dark:text-gray-400 px-4">
+        <span className="mr-2">Category:</span>
+        <span className="font-medium">{post.category}</span>
+        <p>
+          Updated At:{" "}
+          {new Date(post.updatedAt || post.createdAt).toLocaleDateString(
+            "en-US",
+            {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }
+          )}
+        </p>
+        <span>Author - {post.userId?.username || "unauthored"}</span>
+      </div>
 
       <br />
 
@@ -77,7 +87,7 @@ export const PostPage = () => {
         dangerouslySetInnerHTML={{ __html: post.content }}
       /> */}
 
-      <div className="ql-editor prose prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert">
+      <div className="ql-editor prose prose-img:mx-auto prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert">
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
       </div>
     </div>

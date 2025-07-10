@@ -94,7 +94,7 @@ export const signout = async (req, res, next) => {
 };
 
 export const getusers = async (req, res, next) => {
-  if (!req.user.isAdmin) {
+  if (!req.user.isSuperAdmin) {
     return next(errorHandler(403, "You are not allowed to see all users."));
   }
 
@@ -130,6 +130,31 @@ export const getusers = async (req, res, next) => {
       users: usersWithoutPassword,
       totalUsers,
       lastMonthUsers,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const toggleadmin = async (req, res, next) => {
+  try {
+    if (!req.user.isSuperAdmin) {
+      return next(errorHandler(403, "Access Denied!"));
+    }
+
+    const user = await User.findById(req.params.userId);
+    if (!user) return next(errorHandler(404, "User not found."));
+    if (user.isSuperAdmin)
+      return next(errorHandler(403, "Cannot change Super Admin privileges."));
+
+    user.isAdmin = !user.isAdmin;
+    await user.save();
+
+    res.status(200).json({
+      message: `User ${user.username} is now ${
+        user.isAdmin ? "an Admin" : "a normal User"
+      }.`,
+      isAdmin: user.isAdmin,
     });
   } catch (error) {
     next(error);

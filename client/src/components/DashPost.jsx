@@ -29,7 +29,10 @@ export const DashPost = () => {
     const fetchPosts = async () => {
       try {
         // setIsLoading(true);
-        const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
+        const url = currentUser.isSuperAdmin
+          ? `/api/post/getposts`
+          : `/api/post/getposts?userId=${currentUser._id}`;
+        const res = await fetch(url);
         const data = await res.json();
 
         if (res.ok) {
@@ -50,7 +53,7 @@ export const DashPost = () => {
     if (currentUser.isAdmin) {
       fetchPosts();
     }
-  }, [currentUser.isAdmin, currentUser._id]);
+  }, [currentUser.isAdmin, currentUser._id, currentUser.isSuperAdmin]);
 
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
@@ -104,7 +107,7 @@ export const DashPost = () => {
         <div className="overflow-x-auto p-4">
           <Table hoverable className="w-full p-2">
             <TableHead>
-              <TableRow className="bg-gray-400">
+              <TableRow>
                 <TableHeadCell className="w-48 whitespace-nowrap px-4 py-3">
                   Updated At
                 </TableHeadCell>
@@ -151,6 +154,9 @@ export const DashPost = () => {
                     >
                       {post.title}
                     </Link>
+                    <p className="text-sm text-gray-600">
+                      by - {post.userId?.username}
+                    </p>
                   </TableCell>
                   <TableCell className="w-32 whitespace-nowrap px-4 py-2">
                     {post.category}

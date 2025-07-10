@@ -21,10 +21,18 @@
   list-style-type: lower-roman;
 }
 
+.ql-editor img {
+  display: block;
+  margin-inline: auto !important;
+  width: 360px;
+  max-width: 100%;
+  height: auto;
+}
+
 .ql-editor pre {
   background-color: #1e293b; /* or any dark bg */
   color: #f8fafc;
-  padding: 1em;
+  /* padding: 1em; */
   border-radius: 0.5rem;
   overflow-x: auto;
   font-family: "Fira Code", monospace;

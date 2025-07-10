@@ -63,7 +63,13 @@ const DashSidebar = () => {
             <SidebarItem
               as="div"
               icon={HiChartPie}
-              label={currentUser.isAdmin ? "Admin" : "User"}
+              label={
+                currentUser.isSuperAdmin
+                  ? "GM"
+                  : currentUser.isAdmin
+                  ? "Admin"
+                  : "User"
+              }
               active={tab === "profile"}
             >
               Profile
@@ -88,15 +94,17 @@ const DashSidebar = () => {
                 </SidebarItem>
               </Link>
 
-              <Link to="/dashboard?tab=users">
-                <SidebarItem
-                  as="div"
-                  icon={HiUserGroup}
-                  active={tab === "users"}
-                >
-                  Users
-                </SidebarItem>
-              </Link>
+              {currentUser.isSuperAdmin && (
+                <Link to="/dashboard?tab=users">
+                  <SidebarItem
+                    as="div"
+                    icon={HiUserGroup}
+                    active={tab === "users"}
+                  >
+                    Users
+                  </SidebarItem>
+                </Link>
+              )}
             </>
           )}
 

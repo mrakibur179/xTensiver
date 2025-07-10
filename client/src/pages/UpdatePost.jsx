@@ -31,12 +31,13 @@ const UpdatePost = () => {
   const { quill, quillRef } = useQuill({
     modules: {
       toolbar: [
-        [{ header: [1, 2, 3, false] }],
+        [{ size: ["small", false, "large", "huge"] }],
         ["bold", "italic", "underline", "strike"],
+        [{ align: [] }],
         [{ color: [] }, { background: [] }],
         [{ list: "ordered" }, { list: "bullet" }],
         [{ indent: "-1" }, { indent: "+1" }],
-        ["link", "image"],
+        ["link", "image", "video"],
         ["clean"],
       ],
     },

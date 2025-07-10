@@ -2,7 +2,7 @@ import Post from "../models/post.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const create = async (req, res, next) => {
-  if (!req.user.isAdmin) {
+  if (!req.currentUser.isAdmin) {
     return next(errorHandler(403, "You are not allowed to create a post."));
   }
 
@@ -54,7 +54,8 @@ export const getposts = async (req, res, next) => {
     })
       .sort({ updatedAt: sortDirection })
       .skip(startIndex)
-      .limit(limit);
+      .limit(limit)
+      .populate("userId", "username");
 
     const totalPost = await Post.countDocuments();
 
@@ -94,7 +95,7 @@ export const deletepost = async (req, res, next) => {
 };
 
 export const updatepost = async (req, res, next) => {
-  if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+  if (!req.currentUser.isAdmin || req.user.id !== req.params.userId) {
     return next(errorHandler(403, "You cannot update this post"));
   }
 

@@ -10,6 +10,8 @@ import {
   TableHead,
   TableHeadCell,
   TableRow,
+  Toast,
+  ToggleSwitch,
 } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
@@ -88,13 +90,37 @@ export const DashUsers = () => {
     }
   };
 
+  const handleToggleAdmin = async (userId) => {
+    try {
+      const res = await fetch(`/api/user/toggleadmin/${userId}`, {
+        method: "PUT",
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user._id === userId ? { ...user, isAdmin: data.isAdmin } : user
+          )
+        );
+      } else {
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="table-auto md:mx-auto scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-600 dark:scrollbar-thumb-slate-800">
       {isLoading ? (
         <div className="w-full mt-12 flex items-center flex-col">
           <Spinner aria-label="Center-aligned spinner example" />
         </div>
-      ) : currentUser.isAdmin && users.length > 0 ? (
+      ) : !currentUser.isSuperAdmin ? (
+        <h1 className="text-red-600 text-xl p-4">Access Denied!</h1>
+      ) : users.length > 0 ? (
         <div className="overflow-x-auto p-4">
           <Table hoverable className="w-full p-2">
             <TableHead>
@@ -145,23 +171,28 @@ export const DashUsers = () => {
                     {user.email}
                   </TableCell>
                   <TableCell className="w-32 whitespace-nowrap px-4 py-2">
-                    {user.isAdmin ? (
-                      <FaCheck className="text-green-600" />
+                    {user.isSuperAdmin ? (
+                      "GM"
                     ) : (
-                      <FaTimes className="text-red-600" />
+                      <ToggleSwitch
+                        checked={user.isAdmin}
+                        onChange={() => handleToggleAdmin(user._id)}
+                        className="text-green-600"
+                      />
                     )}
                   </TableCell>
 
                   <TableCell className="w-20 px-2 py-2">
-                    <span
+                    <button
                       onClick={() => {
                         setOpenModal(true);
                         setUserIdToDelete(user._id);
                       }}
                       className="text-red-500 hover:underline cursor-pointer whitespace-nowrap"
+                      disabled={user.isSuperAdmin}
                     >
                       Delete
-                    </span>
+                    </button>
                   </TableCell>
                 </TableRow>
               ))}
