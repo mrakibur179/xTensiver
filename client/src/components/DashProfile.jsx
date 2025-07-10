@@ -10,7 +10,7 @@ import {
   signOutSuccess,
 } from "../redux/user/userSlice";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Modal, ModalBody, ModalHeader } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
@@ -40,6 +40,11 @@ const DashProfile = () => {
       });
 
       const data = await res.json();
+
+      if (currentUser.isSuperAdmin) {
+        toast.error(data.message);
+        return;
+      }
       if (!res.ok) {
         dispatch(deleteUserFailure(data.message));
       } else {
@@ -313,6 +318,7 @@ const DashProfile = () => {
 
       <span className="flex justify-between pt-4">
         <button
+          // disabled={currentUser.isSuperAdmin}
           className="bg-orange-400 cursor-pointer p-2 px-4 rounded-md"
           onClick={() => setOpenModal(true)}
         >

@@ -74,6 +74,10 @@ export const deleteUser = async (req, res, next) => {
     return next(errorHandler(403, "You cannot delete this account."));
   }
 
+  if (req.user.isSuperAdmin) {
+    return next(errorHandler(403, "You cannot delete SuperAdmin"));
+  }
+
   try {
     await User.findByIdAndDelete(req.params.userId);
     res.status(200).json("Account Deleted Successfully!!!");

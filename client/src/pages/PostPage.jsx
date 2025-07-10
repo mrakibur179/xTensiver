@@ -48,7 +48,7 @@ export const PostPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-20 text-gray-800 dark:text-gray-200 overflow-x-hidden">
-      <span className="py-4">Home > post > {postSlug}</span>
+      <span className="py-4">Home > posts > {postSlug}</span>
 
       {post.poster && (
         <img
@@ -59,13 +59,13 @@ export const PostPage = () => {
       )}
 
       <h1 className="text-3xl sm:text-4xl font-bold px-4">{post.title}</h1>
-      <p className="text-sm leading-relaxed mb-2 px-4 text-gray-400">
+      <p className="text-sm leading-relaxed py-4 px-4 text-gray-600 dark:text-gray-400">
         {post.description}
       </p>
 
       <div className="text-sm text-gray-500 dark:text-gray-400 px-4">
         <span className="mr-2">Category:</span>
-        <span className="font-medium">{post.category}</span>
+        <span className="font-medium text-blue-400">{post.category}</span>
         <p>
           Updated At:{" "}
           {new Date(post.updatedAt || post.createdAt).toLocaleDateString(

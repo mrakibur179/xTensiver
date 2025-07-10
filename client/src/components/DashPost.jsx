@@ -20,57 +20,55 @@ export const DashPost = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [error, setError] = useState(null);
   const [showMore, setShowMore] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState("");
 
   useEffect(() => {
     const fetchPosts = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      const url = currentUser.isSuperAdmin
+        ? `/api/post/getposts`
+        : `/api/post/getposts?userId=${currentUser._id}`;
+
       try {
-        // setIsLoading(true);
-        const url = currentUser.isSuperAdmin
-          ? `/api/post/getposts`
-          : `/api/post/getposts?userId=${currentUser._id}`;
         const res = await fetch(url);
         const data = await res.json();
 
-        if (res.ok) {
-          setUserPosts(data.posts);
-          if (data.posts.length < 9) {
-            setShowMore(false);
-          }
-        } else {
-          console.log(data);
-        }
-        setIsLoading(false);
+        if (!res.ok) throw new Error(data.message || "Failed to fetch posts");
+
+        setUserPosts(data.posts);
+        setShowMore(data.posts.length >= 9);
       } catch (error) {
-        console.log(error.message);
+        setError(error.message);
+      } finally {
         setIsLoading(false);
       }
     };
 
-    if (currentUser.isAdmin) {
+    if (currentUser.isAdmin || currentUser.isSuperAdmin) {
       fetchPosts();
     }
-  }, [currentUser.isAdmin, currentUser._id, currentUser.isSuperAdmin]);
+  }, [currentUser]);
 
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
+    const url = currentUser.isSuperAdmin
+      ? `/api/post/getposts?startIndex=${startIndex}`
+      : `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`;
 
     try {
-      const res = await fetch(
-        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
-      );
+      const res = await fetch(url);
       const data = await res.json();
-      if (res.ok) {
-        setUserPosts((prev) => [...prev, ...data.posts]);
-        if (data.posts.length < 9) {
-          setShowMore(false);
-        }
-      }
+      if (!res.ok) throw new Error(data.message || "Failed to load more posts");
+
+      setUserPosts((prev) => [...prev, ...data.posts]);
+      if (data.posts.length < 9) setShowMore(false);
     } catch (error) {
-      console.log(error);
+      console.error("Show more error:", error.message);
     }
   };
 
@@ -85,15 +83,13 @@ export const DashPost = () => {
       );
       const data = await res.json();
 
-      if (!res.ok) {
-        console.log(data.message);
-      } else {
-        setUserPosts((prev) =>
-          prev.filter((post) => post._id !== postIdToDelete)
-        );
-      }
+      if (!res.ok) throw new Error(data.message || "Failed to delete post");
+
+      setUserPosts((prev) =>
+        prev.filter((post) => post._id !== postIdToDelete)
+      );
     } catch (error) {
-      console.log(error.message);
+      console.error("Delete post error:", error.message);
     }
   };
 
@@ -103,7 +99,10 @@ export const DashPost = () => {
         <div className="w-full mt-12 flex items-center flex-col">
           <Spinner aria-label="Center-aligned spinner example" />
         </div>
-      ) : currentUser.isAdmin && userPosts.length > 0 ? (
+      ) : error ? (
+        <div className="text-red-600 text-center p-4 font-medium">{error}</div>
+      ) : (currentUser.isAdmin || currentUser.isSuperAdmin) &&
+        userPosts.length > 0 ? (
         <div className="overflow-x-auto p-4">
           <Table hoverable className="w-full p-2">
             <TableHead>
@@ -189,7 +188,7 @@ export const DashPost = () => {
             <div className="w-full p-4">
               <button
                 onClick={handleShowMore}
-                className="text-teal-50 rounded-md mx-auto p-2 content-center px-4 bg-blue-600 flex items-center dark:text-gray-50 cursor-pointer"
+                className="text-white bg-blue-600 px-4 py-2 rounded-md"
               >
                 Show More...
               </button>
@@ -197,15 +196,14 @@ export const DashPost = () => {
           )}
         </div>
       ) : (
-        <>
-          <h1 className="text-left text-2xl p-4">
-            You don't have any post yet.
-            <span className="p-2 text-blue-800 underline cursor-pointer">
-              <Link to="/create-post">Create One</Link>
-            </span>
-          </h1>
-        </>
+        <div className="p-4 text-xl">
+          You don't have any posts yet.{" "}
+          <Link to="/create-post" className="text-blue-700 underline">
+            Create one
+          </Link>
+        </div>
       )}
+
       <Modal
         show={openModal}
         size="md"
@@ -220,18 +218,10 @@ export const DashPost = () => {
               Are you sure you want to delete this post?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button
-                color="red"
-                onClick={handleDeletePost}
-                className="cursor-pointer"
-              >
+              <Button color="red" onClick={handleDeletePost}>
                 Yes, I'm sure
               </Button>
-              <Button
-                className="cursor-pointer"
-                color="alternative"
-                onClick={() => setOpenModal(false)}
-              >
+              <Button color="gray" onClick={() => setOpenModal(false)}>
                 No, cancel
               </Button>
             </div>

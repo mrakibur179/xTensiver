@@ -10,18 +10,17 @@ import {
   TableHead,
   TableHeadCell,
   TableRow,
-  Toast,
   ToggleSwitch,
 } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { useSelector } from "react-redux";
-import { FaCheck, FaTimes } from "react-icons/fa";
 
 export const DashUsers = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [showMore, setShowMore] = useState(true);
   const [openModal, setOpenModal] = useState(false);
@@ -29,49 +28,48 @@ export const DashUsers = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setError(null);
       try {
-        // setIsLoading(true);
         const res = await fetch(`/api/user/getusers`);
         const data = await res.json();
 
-        if (res.ok) {
-          setUsers(data.users);
-          if (data.users.length < 9) {
-            setShowMore(false);
-          }
-        } else {
-          console.log(data);
-        }
-        setIsLoading(false);
+        if (!res.ok) throw new Error(data.message || "Failed to fetch users");
+
+        setUsers(data.users);
+        if (data.users.length < 9) setShowMore(false);
       } catch (error) {
-        console.log(error.message);
+        console.error("Fetch users error:", error.message);
+        setError(error.message);
+      } finally {
         setIsLoading(false);
       }
     };
 
-    if (currentUser.isAdmin) {
+    if (currentUser.isSuperAdmin) {
       fetchUsers();
     }
-  }, [currentUser.isAdmin, currentUser._id]);
+  }, [currentUser.isSuperAdmin]);
 
   const handleShowMore = async () => {
     const startIndex = users.length;
 
     try {
-      const res = await fetch(`/api/users/getusers&startIndex=${startIndex}`);
+      const res = await fetch(`/api/user/getusers?startIndex=${startIndex}`);
       const data = await res.json();
-      if (res.ok) {
-        setUsers((prev) => [...prev, ...data.users]);
-        if (data.users.length < 9) {
-          setShowMore(false);
-        }
-      }
+
+      if (!res.ok)
+        throw new Error(data.message || "Failed to fetch more users");
+
+      setUsers((prev) => [...prev, ...data.users]);
+      if (data.users.length < 9) setShowMore(false);
     } catch (error) {
-      console.log(error);
+      console.error("Show more error:", error.message);
+      setError(error.message);
     }
   };
 
   const handleDeleteUser = async () => {
+    setOpenModal(false);
     try {
       const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
         method: "DELETE",
@@ -79,14 +77,12 @@ export const DashUsers = () => {
 
       const data = await res.json();
 
-      if (res.ok) {
-        setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
-        setOpenModal(false);
-      } else {
-        console.log(data.message);
-      }
+      if (!res.ok) throw new Error(data.message || "Delete failed");
+
+      setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
     } catch (error) {
-      console.log(error.message);
+      console.error("Delete error:", error.message);
+      setError(error.message);
     }
   };
 
@@ -95,20 +91,18 @@ export const DashUsers = () => {
       const res = await fetch(`/api/user/toggleadmin/${userId}`, {
         method: "PUT",
       });
-
       const data = await res.json();
 
-      if (res.ok) {
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user._id === userId ? { ...user, isAdmin: data.isAdmin } : user
-          )
-        );
-      } else {
-        console.log(data.message);
-      }
+      if (!res.ok) throw new Error(data.message || "Toggle admin failed");
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === userId ? { ...user, isAdmin: data.isAdmin } : user
+        )
+      );
     } catch (error) {
-      console.log(error.message);
+      console.error("Toggle admin error:", error.message);
+      setError(error.message);
     }
   };
 
@@ -116,10 +110,12 @@ export const DashUsers = () => {
     <div className="table-auto md:mx-auto scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-600 dark:scrollbar-thumb-slate-800">
       {isLoading ? (
         <div className="w-full mt-12 flex items-center flex-col">
-          <Spinner aria-label="Center-aligned spinner example" />
+          <Spinner aria-label="Loading spinner" />
         </div>
       ) : !currentUser.isSuperAdmin ? (
         <h1 className="text-red-600 text-xl p-4">Access Denied!</h1>
+      ) : error ? (
+        <div className="text-red-600 text-center p-4 font-medium">{error}</div>
       ) : users.length > 0 ? (
         <div className="overflow-x-auto p-4">
           <Table hoverable className="w-full p-2">
@@ -203,7 +199,7 @@ export const DashUsers = () => {
             <div className="w-full p-4">
               <button
                 onClick={handleShowMore}
-                className="text-teal-50 hover:shadow-2xl rounded-md mx-auto p-2 content-center px-4 bg-blue-600 flex items-center dark:text-gray-50 cursor-pointer"
+                className="text-white bg-blue-600 px-4 py-2 rounded-md"
               >
                 Show More...
               </button>
@@ -211,10 +207,9 @@ export const DashUsers = () => {
           )}
         </div>
       ) : (
-        <>
-          <h1 className="text-left text-2xl p-4">No Users Yet!</h1>
-        </>
+        <h1 className="text-left text-2xl p-4">No Users Yet!</h1>
       )}
+
       <Modal
         show={openModal}
         size="md"
@@ -229,18 +224,10 @@ export const DashUsers = () => {
               Are you sure you want to delete this user?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button
-                color="red"
-                onClick={handleDeleteUser}
-                className="cursor-pointer"
-              >
+              <Button color="red" onClick={handleDeleteUser}>
                 Yes, I'm sure
               </Button>
-              <Button
-                className="cursor-pointer"
-                color="alternative"
-                onClick={() => setOpenModal(false)}
-              >
+              <Button color="alternative" onClick={() => setOpenModal(false)}>
                 No, cancel
               </Button>
             </div>
