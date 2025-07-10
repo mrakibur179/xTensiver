@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Spinner } from "flowbite-react";
 import { useParams } from "react-router-dom";
+import { CallToAction } from "../components/CallToAction";
 
 export const PostPage = () => {
   const { postSlug } = useParams();
@@ -48,7 +49,9 @@ export const PostPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-20 text-gray-800 dark:text-gray-200 overflow-x-hidden">
-      <span className="py-4">Home > posts > {postSlug}</span>
+      <span className="py-4">
+        Home {`>`} posts {`>`} {postSlug}
+      </span>
 
       {post.poster && (
         <img
@@ -90,6 +93,8 @@ export const PostPage = () => {
       <div className="ql-editor prose prose-img:mx-auto prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert">
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
       </div>
+
+      <CallToAction />
     </div>
   );
 };

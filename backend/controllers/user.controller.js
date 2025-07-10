@@ -70,13 +70,13 @@ export const updateUser = async (req, res, next) => {
 };
 
 export const deleteUser = async (req, res, next) => {
-  if (!req.user.isAdmin && req.user.id !== req.params.userId) {
+  if (!req.user.isSuperAdmin && req.user.id !== req.params.userId) {
     return next(errorHandler(403, "You cannot delete this account."));
   }
 
-  if (req.user.isSuperAdmin) {
-    return next(errorHandler(403, "You cannot delete SuperAdmin"));
-  }
+  // if (req.user.isSuperAdmin) {
+  //   return next(errorHandler(403, "You cannot delete SuperAdmin"));
+  // }
 
   try {
     await User.findByIdAndDelete(req.params.userId);

@@ -22,7 +22,7 @@ const Header = () => {
 
   const navLinks = [
     { link: "/", title: "Home" },
-    { link: "/blogs", title: "Blogs" },
+    { link: "/posts", title: "Posts" },
     { link: "/about", title: "About" },
     { link: "/contact", title: "Contact" },
   ];
@@ -235,27 +235,33 @@ const Header = () => {
                     </NavLink>
                   ))}
 
-                  <div className="self-center">
+                  {/* Auth */}
+                  <div className="mt-4">
+                    {currentUser ? (
+                      <Link
+                        to="/dashboard?tab=profile"
+                        className="block w-full text-center border px-4 py-2 rounded-full bg-blue-500 font-semibold border-teal-500 dark:border-teal-500 text-white dark:text-gray-100 hover:bg-blue-600 dark:hover:bg-blue-700 transition"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Dashboard
+                      </Link>
+                    ) : (
+                      <Link
+                        to="/sign-in"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block w-full text-center border px-4 py-2 rounded-full bg-blue-500 font-semibold border-teal-500 dark:border-teal-500 text-white dark:text-gray-100 hover:bg-blue-600 dark:hover:bg-blue-700 transition"
+                      >
+                        Sign-In
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className="self-center mt-8">
                     <ThemeTogglerButton />
                   </div>
                 </nav>
 
                 {/* Theme Toggle */}
-
-                {/* Auth */}
-                <div className="mt-4">
-                  {currentUser ? (
-                    ""
-                  ) : (
-                    <Link
-                      to="/sign-in"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block w-full text-center border px-4 py-2 rounded-full bg-blue-500 font-semibold border-teal-500 dark:border-teal-500 text-white dark:text-gray-100 hover:bg-blue-600 dark:hover:bg-blue-700 transition"
-                    >
-                      Sign-In
-                    </Link>
-                  )}
-                </div>
               </motion.div>
             )}
           </AnimatePresence>
