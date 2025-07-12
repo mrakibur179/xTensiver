@@ -35,7 +35,7 @@ const Home = () => {
       <div className="min-h-screen pt-28 text-gray-800 dark:text-gray-200 px-4 py-10 max-w-7xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
+          <h1 className="text-5xl md:text-5xl font-extrabold leading-tight mb-4">
             Read the most interesting articles
           </h1>
           <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
@@ -71,13 +71,13 @@ const Home = () => {
               <Link
                 key={post._id}
                 to={`/post/${post.slug}`}
-                className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300"
+                className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300"
               >
                 <div className="overflow-hidden">
                   <img
                     src={post.poster}
                     alt={post.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition duration-500"
+                    className="w-full h-48 object-cover group-hover:scale-102 transition duration-500"
                   />
                 </div>
                 <div className="p-4">

@@ -39,6 +39,9 @@ const CreatePost = () => {
         ["link", "image", "video"],
         ["clean"],
       ],
+      clipboard: {
+        matchVisual: false,
+      },
     },
     placeholder: "Write your blog content here...",
     theme: "snow",

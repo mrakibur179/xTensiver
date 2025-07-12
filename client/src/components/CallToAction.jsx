@@ -14,12 +14,18 @@ export const CallToAction = () => {
         today!
       </p>
       <div className="flex justify-center gap-4">
-        <Link
-          to={currentUser ? "#" : "/sign-in"}
-          className="border border-white text-white font-semibold px-6 py-2 rounded-md hover:bg-white hover:text-indigo-600 transition"
-        >
-          {currentUser ? "Welcome" : "Join Now"}
-        </Link>
+        {currentUser ? (
+          <span className="border border-white text-white font-semibold px-6 py-2 rounded-md hover:bg-white hover:text-indigo-600 transition">
+            Welcome
+          </span>
+        ) : (
+          <Link
+            to={"/sign-in"}
+            className="border border-white text-white font-semibold px-6 py-2 rounded-md hover:bg-white hover:text-indigo-600 transition"
+          >
+            Join Now
+          </Link>
+        )}
       </div>
     </div>
   );

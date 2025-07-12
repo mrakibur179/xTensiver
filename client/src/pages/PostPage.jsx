@@ -63,11 +63,11 @@ export const PostPage = () => {
           <img
             src={post.poster}
             alt={post.title}
-            className="w-1/2 h-full mt-4 mx-auto object-cover rounded-md mb-6 shadow"
+            className="min-w-[12rem] w-screen sm:w-1/2 h-full mt-4 mx-auto object-cover rounded-md mb-6 shadow"
           />
         )}
 
-        <h1 className="text-3xl flex gap-8 items-center sm:text-4xl font-bold px-4">
+        <h1 className="text-3xl flex gap-8 items-center sm:text-4xl font-bold">
           {post.title}
           {currentUser?.isSuperAdmin ? (
             <Link
@@ -80,10 +80,10 @@ export const PostPage = () => {
             ""
           )}
         </h1>
-        <p className="text-gray-600 dark:text-gray-300 px-4 mt-2">
+        <p className="text-gray-600 dark:text-gray-300 mt-4">
           {post.description}
         </p>
-        <span className="text-sm flex items-center gap-2 py-4 px-4 text-gray-600 dark:text-gray-400">
+        <span className="text-sm flex items-center flex-wrap gap-2 py-4 text-gray-600 dark:text-gray-400">
           <p>Tags:</p>
           {post.tags.map((tag) => (
             <Link
@@ -96,7 +96,7 @@ export const PostPage = () => {
           ))}
         </span>
 
-        <div className="text-sm text-gray-500 dark:text-gray-400 px-4">
+        <div className="text-sm text-gray-500 dark:text-gray-400">
           <p>
             Updated At:{" "}
             {new Date(post.updatedAt || post.createdAt).toLocaleDateString(
@@ -112,11 +112,6 @@ export const PostPage = () => {
         </div>
 
         <br />
-
-        {/* <article
-        className="prose prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert"
-        dangerouslySetInnerHTML={{ __html: post.content }}
-      /> */}
 
         <div className="ql-editor prose prose-img:mx-auto prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert">
           <div dangerouslySetInnerHTML={{ __html: post.content }} />
