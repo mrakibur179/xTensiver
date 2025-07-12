@@ -8,6 +8,22 @@
 @plugin "flowbite-react/plugin/tailwindcss";
 @source "../.flowbite-react/class-list.json";
 
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1a202c;
+  --hover-color: #f7fafc;
+  --tag-bg-color: #e2e8f0;
+  --tag-text-color: #1a202c;
+}
+
+.dark {
+  --bg-color: #1a202c;
+  --text-color: #f7fafc;
+  --hover-color: #2d3748;
+  --tag-bg-color: #4a5568;
+  --tag-text-color: #f7fafc;
+}
+
 .prose ol {
   list-style-type: decimal;
   padding-left: 1.5rem;

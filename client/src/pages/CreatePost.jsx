@@ -4,6 +4,8 @@ import "quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
 import { Link, useNavigate } from "react-router-dom";
+import CreatableSelect from "react-select/creatable";
+
 import "./CreatePost.css";
 
 const CreatePost = () => {
@@ -15,7 +17,8 @@ const CreatePost = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const [category, setCategory] = useState("");
+  const [selectedTags, setSelectedTags] = useState([]);
+
   const categories = [
     "Technology",
     "Health",
@@ -102,11 +105,6 @@ const CreatePost = () => {
     formData.append("file", file);
     formData.append("upload_preset", "xTensiver");
 
-    // console.log("FormData entries:");
-    // for (let [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
-
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${
         import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
@@ -179,7 +177,13 @@ const CreatePost = () => {
 
     const content = quill.root.innerHTML;
 
-    if (!title || !description || !posterURL || !content || !category) {
+    if (
+      !title ||
+      !description ||
+      !posterURL ||
+      !content ||
+      selectedTags.length === 0
+    ) {
       toast.error("All fields are required");
       return;
     }
@@ -191,14 +195,13 @@ const CreatePost = () => {
         description,
         poster: posterURL,
         content,
-        category,
+        tags: selectedTags.map((tag) => tag.value),
       };
 
       const response = await fetch(`/api/post/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${access_token}`,
         },
         credentials: "include",
         body: JSON.stringify(postData),
@@ -206,8 +209,8 @@ const CreatePost = () => {
 
       const data = await response.json();
       if (!response.ok) {
-        // const errorData = await response.json();
-        throw new Error(data.message || "Failed to create post");
+        toast.error(data.message || "Failed to create post");
+        return;
       }
 
       toast.success("Post published!");
@@ -217,7 +220,7 @@ const CreatePost = () => {
       setTitle("");
       setDescription("");
       setPosterURL("");
-      setCategory("");
+      setSelectedTags([]);
       quill.root.innerHTML = "";
     } catch (err) {
       console.error(err);
@@ -287,20 +290,60 @@ const CreatePost = () => {
           >
             Select Category
           </label>
-          <select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="p-3 border border-gray-400 text-gray-800 dark:text-gray-200 rounded-md dark:bg-gray-700 dark:border-gray-600"
-            required
-          >
-            <option value="">-- Choose a category --</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+          <CreatableSelect
+            styles={{
+              control: (baseStyles) => ({
+                ...baseStyles,
+                backgroundColor: "var(--bg-color)", // Use CSS variable or theme color
+                color: "var(--text-color)",
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: "var(--bg-color)",
+                color: "var(--text-color)",
+              }),
+              option: (base, { isFocused }) => ({
+                ...base,
+                backgroundColor: isFocused
+                  ? "var(--hover-color)"
+                  : "var(--bg-color)",
+                color: "var(--text-color)",
+              }),
+              multiValue: (base) => ({
+                ...base,
+                backgroundColor: "var(--tag-bg-color)",
+              }),
+              multiValueLabel: (base) => ({
+                ...base,
+                color: "var(--tag-text-color)",
+              }),
+              input: (base) => ({
+                ...base,
+                color: "var(--text-color)",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: "var(--text-color)",
+              }),
+            }}
+            isMulti
+            placeholder="Add tags"
+            value={selectedTags}
+            onChange={(value) => setSelectedTags(value)}
+            options={categories.map((cat) => ({ value: cat, label: cat }))}
+            className="react-select-container border-1 border-gray-400 rounded-[6px]"
+            classNamePrefix="react-select"
+            theme={(theme) => ({
+              ...theme,
+              colors: {
+                ...theme.colors,
+                primary: "#6366f1", // indigo-500
+                primary25: "#4f46e5", // indigo-600
+                neutral0: "var(--bg-color)", // background
+                neutral80: "var(--text-color)", // text
+              },
+            })}
+          />
         </div>
 
         {/* Poster Upload */}

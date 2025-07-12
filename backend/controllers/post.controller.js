@@ -6,13 +6,15 @@ export const create = async (req, res, next) => {
     return next(errorHandler(403, "You are not allowed to create a post."));
   }
 
-  if (
-    !req.body.title ||
-    !req.body.content ||
-    !req.body.category ||
-    !req.body.description
-  ) {
+  const { title, content, description, tags } = req.body;
+
+  if (!title || !content || !tags || !tags.length || !description) {
     return next(errorHandler(400, "Please provide all the information."));
+  }
+
+  const wordCount = title.trim().split(/\s+/).length;
+  if (wordCount > 12) {
+    return next(errorHandler(400, "Title must not exceed 10 words."));
   }
 
   const slug = req.body.title
@@ -99,6 +101,17 @@ export const updatepost = async (req, res, next) => {
     return next(errorHandler(403, "You cannot update this post"));
   }
 
+  const { title, content, description, tags } = req.body;
+
+  if (!title || !content || !tags || !tags.length || !description) {
+    return next(errorHandler(400, "Please provide all the information."));
+  }
+
+  const wordCount = title.trim().split(/\s+/).length;
+  if (wordCount > 12) {
+    return next(errorHandler(400, "Title must not exceed 10 words."));
+  }
+
   try {
     const updatePost = await Post.findByIdAndUpdate(
       req.params.postId,
@@ -107,7 +120,7 @@ export const updatepost = async (req, res, next) => {
           title: req.body.title,
           description: req.body.description,
           content: req.body.content,
-          category: req.body.category,
+          tags,
           poster: req.body.poster,
           slug: req.body.title
             .split(" ")

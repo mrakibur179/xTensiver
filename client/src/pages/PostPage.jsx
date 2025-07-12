@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { Spinner } from "flowbite-react";
-import { useParams } from "react-router-dom";
+import { BarsIcon, ChevronDownIcon, CloseIcon, Spinner } from "flowbite-react";
+import { Link, useParams } from "react-router-dom";
 import { CallToAction } from "../components/CallToAction";
+import { CommentSection } from "../components/CommentSection";
+import { useSelector } from "react-redux";
+import { FaRegEdit } from "react-icons/fa";
 
 export const PostPage = () => {
   const { postSlug } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [post, setPost] = useState(null);
+
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -48,53 +53,81 @@ export const PostPage = () => {
     );
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-20 text-gray-800 dark:text-gray-200 overflow-x-hidden">
-      <span className="py-4">
-        Home {`>`} posts {`>`} {postSlug}
-      </span>
+    <div className="px-4 bg-slate-100 dark:bg-slate-800 py-20 text-gray-800 dark:text-gray-200 overflow-x-hidden">
+      <div className="max-w-5xl mx-auto">
+        <span className="py-4">
+          Home {`>`} posts {`>`} {postSlug}
+        </span>
 
-      {post.poster && (
-        <img
-          src={post.poster}
-          alt={post.title}
-          className="w-1/2 h-full mt-4 mx-auto object-cover rounded-md mb-6 shadow"
-        />
-      )}
+        {post.poster && (
+          <img
+            src={post.poster}
+            alt={post.title}
+            className="w-1/2 h-full mt-4 mx-auto object-cover rounded-md mb-6 shadow"
+          />
+        )}
 
-      <h1 className="text-3xl sm:text-4xl font-bold px-4">{post.title}</h1>
-      <p className="text-sm leading-relaxed py-4 px-4 text-gray-600 dark:text-gray-400">
-        {post.description}
-      </p>
-
-      <div className="text-sm text-gray-500 dark:text-gray-400 px-4">
-        <span className="mr-2">Category:</span>
-        <span className="font-medium text-blue-400">{post.category}</span>
-        <p>
-          Updated At:{" "}
-          {new Date(post.updatedAt || post.createdAt).toLocaleDateString(
-            "en-US",
-            {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            }
+        <h1 className="text-3xl flex gap-8 items-center sm:text-4xl font-bold px-4">
+          {post.title}
+          {currentUser?.isSuperAdmin ? (
+            <Link
+              className="text-xl hover:text-blue-600"
+              to={`/update-post/${post._id}`}
+            >
+              <FaRegEdit />
+            </Link>
+          ) : (
+            ""
           )}
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300 px-4 mt-2">
+          {post.description}
         </p>
-        <span>Author - {post.userId?.username || "unauthored"}</span>
-      </div>
+        <span className="text-sm flex items-center gap-2 py-4 px-4 text-gray-600 dark:text-gray-400">
+          <p>Tags:</p>
+          {post.tags.map((tag) => (
+            <Link
+              key={tag}
+              className="text-blue-500 hover:underline bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full"
+              to="#"
+            >
+              #{tag}
+            </Link>
+          ))}
+        </span>
 
-      <br />
+        <div className="text-sm text-gray-500 dark:text-gray-400 px-4">
+          <p>
+            Updated At:{" "}
+            {new Date(post.updatedAt || post.createdAt).toLocaleDateString(
+              "en-US",
+              {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              }
+            )}
+          </p>
+          <span>Author - {post.userId?.username || "unauthored"}</span>
+        </div>
 
-      {/* <article
+        <br />
+
+        {/* <article
         className="prose prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert"
         dangerouslySetInnerHTML={{ __html: post.content }}
       /> */}
 
-      <div className="ql-editor prose prose-img:mx-auto prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert">
-        <div dangerouslySetInnerHTML={{ __html: post.content }} />
-      </div>
+        <div className="ql-editor prose prose-img:mx-auto prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert">
+          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        </div>
 
-      <CallToAction />
+        <div className="max-w-full">
+          <CallToAction />
+        </div>
+
+        <CommentSection postId={post._id} />
+      </div>
     </div>
   );
 };

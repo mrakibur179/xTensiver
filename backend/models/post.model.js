@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
 
+function arrayLimit(val) {
+  return val.length > 0;
+}
+
 const postSchema = new mongoose.Schema(
   {
     userId: {
@@ -25,9 +29,10 @@ const postSchema = new mongoose.Schema(
       default:
         "https://media.sproutsocial.com/uploads/2022/05/How-to-post-on-instagram-from-pc.jpg",
     },
-    category: {
-      type: String,
+    tags: {
+      type: [String],
       required: true,
+      validate: [arrayLimit, "{PATH} must have at least one tag"],
     },
     slug: {
       type: String,

@@ -61,6 +61,10 @@ const Home = () => {
           </div>
         )}
 
+        {!loading && !error && otherPosts.length === 0 && (
+          <p>No post available...</p>
+        )}
+
         {!loading && !error && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {otherPosts.map((post) => (
