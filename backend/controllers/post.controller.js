@@ -84,11 +84,22 @@ export const getposts = async (req, res, next) => {
 };
 
 export const deletepost = async (req, res, next) => {
-  if (!req.user.isAdmin && req.user.id !== req.params.userId) {
-    return next(errorHandler(403, "You are not supposed to delete this post."));
-  }
-
   try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return next(errorHandler(404, "Post not found"));
+    }
+
+    // ✅ Only author (admin) or superadmin can delete
+    const isAuthor = post.userId.toString() === req.user.id;
+    const isSuperAdmin = req.user.isSuperAdmin;
+
+    if (!isAuthor && !isSuperAdmin) {
+      return next(
+        errorHandler(403, "You are not authorized to delete this post.")
+      );
+    }
+
     await Post.findByIdAndDelete(req.params.postId);
     res.status(200).json("The post has been deleted.");
   } catch (error) {
@@ -97,10 +108,6 @@ export const deletepost = async (req, res, next) => {
 };
 
 export const updatepost = async (req, res, next) => {
-  if (!req.currentUser.isAdmin || req.user.id !== req.params.userId) {
-    return next(errorHandler(403, "You cannot update this post"));
-  }
-
   const { title, content, description, tags } = req.body;
 
   if (!title || !content || !tags || !tags.length || !description) {
@@ -113,16 +120,29 @@ export const updatepost = async (req, res, next) => {
   }
 
   try {
-    const updatePost = await Post.findByIdAndUpdate(
+    const post = await Post.findById(req.params.postId);
+    if (!post) return next(errorHandler(404, "Post not found"));
+
+    // ✅ Only allow if current user is:
+    // - The author AND an admin
+    // - OR a super admin
+    if (
+      post.userId.toString() !== req.user.id &&
+      !req.currentUser.isSuperAdmin
+    ) {
+      return next(errorHandler(403, "You cannot update this post"));
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(
       req.params.postId,
       {
         $set: {
-          title: req.body.title,
-          description: req.body.description,
-          content: req.body.content,
+          title,
+          description,
+          content,
           tags,
           poster: req.body.poster,
-          slug: req.body.title
+          slug: title
             .split(" ")
             .join("-")
             .toLowerCase()
@@ -131,7 +151,8 @@ export const updatepost = async (req, res, next) => {
       },
       { new: true }
     );
-    res.status(200).json(updatePost);
+
+    res.status(200).json(updatedPost);
   } catch (error) {
     next(error);
   }

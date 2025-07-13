@@ -1,12 +1,15 @@
+import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Comment } from "./Comment";
 
 export const CommentSection = ({ postId }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
+  const [comments, setComments] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,6 +43,7 @@ export const CommentSection = ({ postId }) => {
 
       if (res.ok) {
         setComment("");
+        setComments((prev) => [data, ...prev]);
         setError(null);
         toast.success("Comment added successfully");
       } else {
@@ -51,6 +55,22 @@ export const CommentSection = ({ postId }) => {
       toast.error(error.message || "An error occurred while adding comment");
     }
   };
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const res = await fetch(`/api/comment/getPostComments/${postId}`);
+        const data = await res.json();
+        if (res.ok) {
+          setComments(data);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    fetchComments();
+  }, [postId]);
 
   return (
     <div>
@@ -96,6 +116,23 @@ export const CommentSection = ({ postId }) => {
             </button>
           </div>
         </form>
+      )}
+
+      {comments.length === 0 ? (
+        <p className="text-sm my-5">No Comments Yet!!!</p>
+      ) : (
+        <div className="my-5">
+          <p>
+            Comments:{" "}
+            <span className="border px-4 py-1 rounded-full">
+              {comments.length}
+            </span>
+          </p>
+
+          {comments.map((comment) => (
+            <Comment key={comment._id} comment={comment} />
+          ))}
+        </div>
       )}
     </div>
   );

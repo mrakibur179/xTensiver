@@ -44,6 +44,9 @@ export const PostPage = () => {
     fetchPost();
   }, [postSlug]);
 
+  // console.log(post.userId._id);
+  // console.log(currentUser._id);
+
   if (isLoading)
     return (
       <div className="grid h-screen place-items-center">
@@ -73,9 +76,9 @@ export const PostPage = () => {
           />
         )}
 
-        <h1 className="text-3xl flex gap-8 items-center sm:text-4xl font-bold">
+        <h1 className="text-2xl flex gap-8 items-center sm:text-4xl font-bold">
           {post.title}
-          {currentUser?.isSuperAdmin ? (
+          {currentUser?.isSuperAdmin || currentUser?._id === post.userId._id ? (
             <Link
               className="text-xl hover:text-blue-600"
               to={`/update-post/${post._id}`}
