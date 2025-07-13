@@ -71,25 +71,46 @@ const Home = () => {
               <Link
                 key={post._id}
                 to={`/post/${post.slug}`}
-                className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300"
+                className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 flex flex-col"
               >
-                <div className="overflow-hidden">
+                {/* Image */}
+                <div className="overflow-hidden relative">
                   <img
                     src={post.poster}
                     alt={post.title}
                     className="w-full h-48 object-cover group-hover:scale-102 transition duration-500"
                   />
+
+                  {/* Tag Badge */}
+                  {post.tags?.length > 0 && (
+                    <span className="absolute bottom-2 left-0 text-white flex gap-2 text-xs font-semibold px-3 py-1 rounded-full shadow-md transition">
+                      {post.tags?.slice(0, 2).map((tag, index) => (
+                        <span
+                          key={index}
+                          className="backdrop-blur-[6px] text-white text-xs font-semibold px-3 py-[6px] rounded-full shadow-sm drop-shadow-md ring-1 ring-indigo-300 hover:brightness-110 transition"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </span>
+                  )}
                 </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold group-hover:text-blue-600">
+
+                {/* Content */}
+                <div className="p-4 flex flex-col flex-grow">
+                  <h3 className="text-lg font-semibold group-hover:text-blue-600 mb-1">
                     {post.title}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-2">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">
                     {post.description}
                   </p>
-                  <p className="text-xs text-gray-400 mt-2">
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </p>
+                  <div className="text-xs text-gray-400 mt-auto">
+                    {new Date(post.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </div>
                 </div>
               </Link>
             ))}

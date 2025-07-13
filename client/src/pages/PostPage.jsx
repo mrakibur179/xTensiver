@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BarsIcon, ChevronDownIcon, CloseIcon, Spinner } from "flowbite-react";
+import { Spinner } from "flowbite-react";
 import { Link, useParams } from "react-router-dom";
 import { CallToAction } from "../components/CallToAction";
 import { CommentSection } from "../components/CommentSection";
@@ -13,6 +13,12 @@ export const PostPage = () => {
   const [post, setPost] = useState(null);
 
   const { currentUser } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (post) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [post]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -88,7 +94,7 @@ export const PostPage = () => {
           {post.tags.map((tag) => (
             <Link
               key={tag}
-              className="text-blue-500 hover:underline bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full"
+              className="dark:text-blue-200 text-blue-800 hover:underline bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full"
               to="#"
             >
               #{tag}

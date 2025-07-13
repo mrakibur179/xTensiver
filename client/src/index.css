@@ -24,19 +24,6 @@
   --tag-text-color: #f7fafc;
 }
 
-.prose ol {
-  list-style-type: decimal;
-  padding-left: 1.5rem;
-}
-
-.prose ol ol {
-  list-style-type: lower-alpha;
-}
-
-.prose ol ol ol {
-  list-style-type: lower-roman;
-}
-
 .ql-editor img {
   display: block;
   margin-inline: auto !important;
@@ -46,10 +33,13 @@
 }
 
 .ql-editor pre {
-  background-color: #1e293b; /* or any dark bg */
+  background-color: #1e293b;
   color: #f8fafc;
-  /* padding: 1em; */
   border-radius: 0.5rem;
   overflow-x: auto;
   font-family: "Fira Code", monospace;
+}
+
+.ql-editor ol {
+  padding-left: 0 !important;
 }
