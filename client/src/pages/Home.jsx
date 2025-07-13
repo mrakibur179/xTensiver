@@ -87,7 +87,7 @@ const Home = () => {
                       {post.tags?.slice(0, 2).map((tag, index) => (
                         <span
                           key={index}
-                          className="backdrop-blur-[6px] text-white text-xs font-semibold px-3 py-[6px] rounded-full shadow-sm drop-shadow-md ring-1 ring-indigo-300 hover:brightness-110 transition"
+                          className="backdrop-blur-[6px] group-hover:bg-gray-600/60 text-white text-xs font-semibold px-3 py-[6px] rounded-full shadow-sm drop-shadow-md ring-1 ring-indigo-300 hover:brightness-110 transition"
                         >
                           {tag}
                         </span>
@@ -98,7 +98,7 @@ const Home = () => {
 
                 {/* Content */}
                 <div className="p-4 flex flex-col flex-grow">
-                  <h3 className="text-lg font-semibold group-hover:text-blue-600 mb-1">
+                  <h3 className="text-lg font-semibold group-hover:text-teal-400 mb-1">
                     {post.title}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">
