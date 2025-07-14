@@ -87,7 +87,7 @@ const Home = () => {
                       {post.tags?.slice(0, 2).map((tag, index) => (
                         <span
                           key={index}
-                          className="backdrop-blur-[6px] group-hover:bg-gray-600/60 text-white text-xs font-semibold px-3 py-[6px] rounded-full shadow-sm drop-shadow-md ring-1 ring-indigo-300 hover:brightness-110 transition"
+                          className="backdrop-blur-[6px] group-hover:bg-gray-950/40 bg-gray-800/20 text-white text-xs font-semibold px-3 py-[6px] rounded-full shadow-sm drop-shadow-md ring-1 ring-indigo-300 hover:brightness-110 transition"
                         >
                           {tag}
                         </span>
