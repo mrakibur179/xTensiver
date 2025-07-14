@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Comment } from "./Comment";
 
@@ -10,6 +10,7 @@ export const CommentSection = ({ postId }) => {
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,6 +73,37 @@ export const CommentSection = ({ postId }) => {
     fetchComments();
   }, [postId]);
 
+  const handleLike = async (commentId) => {
+    if (!currentUser) {
+      navigate("/sign-in");
+      return;
+    }
+    try {
+      const res = await fetch(`/api/comment/likeComment/${commentId}`, {
+        method: "PUT",
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setComments(
+          comments.map((comment) =>
+            comment._id === commentId
+              ? {
+                  ...comment,
+                  likes: data.likes,
+                  numberOfLikes: data.likes.length,
+                }
+              : comment
+          )
+        );
+      } else {
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       {currentUser ? (
@@ -106,7 +138,7 @@ export const CommentSection = ({ postId }) => {
             className="border w-full px-4 py-2 rounded-md"
           />
 
-          <div className="flex justify-between">
+          <div className="flex justify-between py-4">
             <p>{200 - comment.length} Characters reamaining</p>
             <button
               type="submit"
@@ -130,7 +162,7 @@ export const CommentSection = ({ postId }) => {
           </p>
 
           {comments.map((comment) => (
-            <Comment key={comment._id} comment={comment} />
+            <Comment key={comment._id} comment={comment} onLike={handleLike} />
           ))}
         </div>
       )}

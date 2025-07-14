@@ -98,7 +98,7 @@ const Home = () => {
 
                 {/* Content */}
                 <div className="p-4 flex flex-col flex-grow">
-                  <h3 className="text-lg font-semibold group-hover:text-teal-400 mb-1">
+                  <h3 className="text-lg font-semibold group-hover:text-blue-600 mb-1">
                     {post.title}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">

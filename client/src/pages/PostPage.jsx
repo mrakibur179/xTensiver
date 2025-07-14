@@ -14,11 +14,28 @@ export const PostPage = () => {
 
   const { currentUser } = useSelector((state) => state.user);
 
+  // Save scroll position before reload
+  useEffect(() => {
+    const saveScroll = () => {
+      localStorage.setItem(`scroll-${postSlug}`, window.scrollY);
+    };
+
+    window.addEventListener("beforeunload", saveScroll);
+    return () => {
+      saveScroll();
+      window.removeEventListener("beforeunload", saveScroll);
+    };
+  }, [postSlug]);
+
+  // Restore scroll after post loads
   useEffect(() => {
     if (post) {
-      window.scrollTo({ top: 0, behavior: "instant" });
+      const savedScroll = localStorage.getItem(`scroll-${postSlug}`);
+      if (savedScroll) {
+        window.scrollTo({ top: parseInt(savedScroll), behavior: "instant" });
+      }
     }
-  }, [post]);
+  }, [post, postSlug]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -43,9 +60,6 @@ export const PostPage = () => {
 
     fetchPost();
   }, [postSlug]);
-
-  // console.log(post.userId._id);
-  // console.log(currentUser._id);
 
   if (isLoading)
     return (
