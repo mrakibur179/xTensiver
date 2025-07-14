@@ -75,19 +75,21 @@ const Home = () => {
               >
                 {/* Image */}
                 <div className="overflow-hidden relative">
-                  <img
-                    src={post.poster}
-                    alt={post.title}
-                    className="w-full h-48 object-cover group-hover:scale-102 transition duration-500"
-                  />
+                  <div className="aspect-[16/9] w-full overflow-hidden">
+                    <img
+                      src={post.poster}
+                      alt={post.title}
+                      className="w-full h-full object-cover group-hover:scale-102 transition duration-500"
+                    />
+                  </div>
 
                   {/* Tag Badge */}
                   {post.tags?.length > 0 && (
-                    <span className="absolute bottom-2 left-0 text-white flex gap-2 text-xs font-semibold px-3 py-1 rounded-full shadow-md transition">
+                    <span className="absolute bottom-2 left-0 text-white flex gap-2 text-xs font-semibold px-3 py-1 rounded-full transition">
                       {post.tags?.slice(0, 2).map((tag, index) => (
                         <span
                           key={index}
-                          className="backdrop-blur-[6px] group-hover:bg-gray-950/40 bg-gray-800/20 text-white text-xs font-semibold px-3 py-[6px] rounded-full shadow-sm drop-shadow-md ring-1 ring-indigo-300 hover:brightness-110 transition"
+                          className="backdrop-blur-[6px] group-hover:bg-gray-950/60 bg-gray-800/40 text-white text-xs font-semibold px-3 py-[6px] rounded-full shadow-sm drop-shadow-md hover:brightness-110 transition"
                         >
                           {tag}
                         </span>

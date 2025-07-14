@@ -16,23 +16,22 @@ export const PostPage = () => {
 
   // Save scroll position before reload
   useEffect(() => {
-    const saveScroll = () => {
+    const handleBeforeUnload = () => {
       localStorage.setItem(`scroll-${postSlug}`, window.scrollY);
     };
-
-    window.addEventListener("beforeunload", saveScroll);
+    window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
-      saveScroll();
-      window.removeEventListener("beforeunload", saveScroll);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [postSlug]);
 
-  // Restore scroll after post loads
+  // Restore scroll position after post loads
   useEffect(() => {
     if (post) {
       const savedScroll = localStorage.getItem(`scroll-${postSlug}`);
       if (savedScroll) {
         window.scrollTo({ top: parseInt(savedScroll), behavior: "instant" });
+        localStorage.removeItem(`scroll-${postSlug}`);
       }
     }
   }, [post, postSlug]);

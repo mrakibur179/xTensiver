@@ -46,9 +46,13 @@ const ProfileDropdown = ({
       >
         {currentUser.profilePicture ? (
           <img
-            src={currentUser.profilePicture}
+            src={currentUser.profilePicture || "/default-avatar.png"}
             alt="User profile"
             className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.onError = null;
+              e.target.src = "/default-avatar.png";
+            }}
           />
         ) : (
           <FaUserCircle className="w-full h-full text-gray-400" />

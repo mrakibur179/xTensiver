@@ -32,6 +32,16 @@
   height: auto;
 }
 
+.ql-editor iframe {
+  width: 100%;
+  max-width: 768px;
+  height: 400px;
+  margin: 2rem auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+}
+
 .ql-editor pre {
   background-color: #1e293b;
   color: #f8fafc;

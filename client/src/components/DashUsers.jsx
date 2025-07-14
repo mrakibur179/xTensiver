@@ -155,9 +155,13 @@ export const DashUsers = () => {
                   </TableCell>
                   <TableCell className="px-2 py-2">
                     <img
-                      src={user.profilePicture}
+                      src={user.profilePicture || "/default-avatar.png"}
                       alt={user.username}
                       className="w-10 h-10 rounded-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null; // Prevent infinite loop
+                        e.target.src = "/default-avatar.png"; // Fallback local image
+                      }}
                     />
                   </TableCell>
                   <TableCell className="min-w-[200px] max-w-[300px] truncate px-4 py-2">
