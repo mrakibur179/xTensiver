@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { FaEdit, FaHeart, FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
-export const Comment = ({ comment, onLike, onEdit }) => {
+export const Comment = ({ comment, onLike, onEdit, onDelete }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -60,6 +61,7 @@ export const Comment = ({ comment, onLike, onEdit }) => {
       if (res.ok) {
         setIsEditing(false);
         onEdit(comment, editedComment);
+        toast.success("Comment Updated.");
       } else {
         console.log(data.message);
       }
@@ -82,7 +84,7 @@ export const Comment = ({ comment, onLike, onEdit }) => {
         />
       </div>
       <div className="flex-1">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <p className="font-semibold text-sm">
             @{user.username || "Anonymous User"}
           </p>
@@ -132,9 +134,12 @@ export const Comment = ({ comment, onLike, onEdit }) => {
                   )}
                 </span>
                 {currentUser?.isAdmin && (
-                  <span className="text-red-400 cursor-pointer text-sm">
+                  <button
+                    className="text-red-400 cursor-pointer text-sm"
+                    onClick={() => onDelete(comment._id)}
+                  >
                     <FaTrash />
-                  </span>
+                  </button>
                 )}
               </div>
             </div>

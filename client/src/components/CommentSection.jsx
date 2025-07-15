@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Comment } from "./Comment";
+import { Button, Modal, ModalBody, ModalHeader } from "flowbite-react";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 export const CommentSection = ({ postId }) => {
   const { currentUser } = useSelector((state) => state.user);
@@ -11,6 +13,9 @@ export const CommentSection = ({ postId }) => {
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]);
   const navigate = useNavigate();
+
+  const [openModal, setOpenModal] = useState(false);
+  const [commentToDelete, setCommnetToDelete] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -112,6 +117,26 @@ export const CommentSection = ({ postId }) => {
     );
   };
 
+  const handleDelete = async (commentId) => {
+    setOpenModal(false);
+
+    try {
+      const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setComments(comments.filter((c) => c._id !== commentId));
+        toast.success("Comment Deleted.");
+      } else {
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div>
       {currentUser ? (
@@ -146,7 +171,7 @@ export const CommentSection = ({ postId }) => {
             className="border w-full px-4 py-2 rounded-md"
           />
 
-          <div className="flex justify-between py-4">
+          <div className="flex flex-wrap justify-between gap-4 py-4">
             <p>{200 - comment.length} Characters reamaining</p>
             <button
               type="submit"
@@ -175,10 +200,39 @@ export const CommentSection = ({ postId }) => {
               comment={comment}
               onLike={handleLike}
               onEdit={handleEdit}
+              onDelete={(commentId) => {
+                setOpenModal(true);
+                setCommnetToDelete(commentId);
+              }}
             />
           ))}
         </div>
       )}
+
+      <Modal
+        show={openModal}
+        size="md"
+        onClose={() => setOpenModal(false)}
+        popup
+      >
+        <ModalHeader />
+        <ModalBody>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this comment?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="red" onClick={() => handleDelete(commentToDelete)}>
+                Yes, I'm sure
+              </Button>
+              <Button color="alternative" onClick={() => setOpenModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
     </div>
   );
 };
