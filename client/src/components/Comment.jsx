@@ -3,7 +3,7 @@ import moment from "moment";
 import { FaEdit, FaHeart, FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
-export const Comment = ({ comment, onLike }) => {
+export const Comment = ({ comment, onLike, onEdit }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,14 +32,40 @@ export const Comment = ({ comment, onLike }) => {
     };
 
     fetchUser();
-  }, [comment.userId]);
+  }, [comment]);
 
   if (loading) return <div className="text-sm text-gray-500">Loading...</div>;
   if (error) return <div className="text-sm text-red-500">Error: {error}</div>;
   if (!user) return <div className="text-sm text-gray-500">User not found</div>;
 
-  const handleEdit = async () => {
+  const handleEdit = () => {
     setIsEditing(true);
+    setEditedComment(comment.content);
+  };
+
+  const handleSave = async () => {
+    try {
+      const res = await fetch(`/api/comment/editComment/${comment._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: editedComment,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setIsEditing(false);
+        onEdit(comment, editedComment);
+      } else {
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -66,11 +92,32 @@ export const Comment = ({ comment, onLike }) => {
           </p>
         </div>
 
-        <div className="flex mt-2 items-center gap-12">
+        <div className="mt-2">
           {isEditing ? (
-            <textarea value={comment.content} />
+            <div className="right-auto w-full">
+              <textarea
+                className="border w-full px-2 py-1 rounded-md"
+                value={editedComment}
+                onChange={(e) => setEditedComment(e.target.value)}
+              />
+
+              <div className="flex gap-4 pt-2 justify-end">
+                <button
+                  className="px-4 cursor-pointer py-1 bg-blue-600 rounded-md"
+                  onClick={handleSave}
+                >
+                  Update
+                </button>
+                <button
+                  className="px-4 cursor-pointer py-1 bg-red-600 rounded-md"
+                  onClick={() => setIsEditing(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           ) : (
-            <>
+            <div className="flex gap-12 items-center">
               <p className="text-sm">{comment.content}</p>
 
               <div className="flex gap-2 self-start items-center">
@@ -90,7 +137,7 @@ export const Comment = ({ comment, onLike }) => {
                   </span>
                 )}
               </div>
-            </>
+            </div>
           )}
         </div>
 
