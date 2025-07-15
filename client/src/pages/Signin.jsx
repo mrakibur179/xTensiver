@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Spinner } from "flowbite-react";
 import {
@@ -19,6 +19,8 @@ const Signin = () => {
   const { loading: isLoading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   useEffect(() => {
     if (error) {
@@ -52,7 +54,9 @@ const Signin = () => {
       if (res.ok) {
         toast.success("Login successful!");
         dispatch(signInSuccess(data));
-        navigate("/");
+        const redirectPath =
+          new URLSearchParams(location.search).get("redirect") || "/";
+        navigate(redirectPath);
       }
     } catch (err) {
       dispatch(signInFailure(err.message));

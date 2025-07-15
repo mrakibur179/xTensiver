@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { FaMoon, FaSearch, FaSun } from "react-icons/fa";
 import { MdClose, MdOutlineMenu } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,6 +19,8 @@ const Header = () => {
 
   const menuRef = useRef(null);
   const dropdownRef = useRef(null);
+
+  const location = useLocation();
 
   const navLinks = [
     { link: "/", title: "Home" },
@@ -171,7 +173,9 @@ const Header = () => {
                 />
               ) : (
                 <Link
-                  to="/sign-in"
+                  to={`/sign-in?redirect=${encodeURIComponent(
+                    location.pathname + location.search
+                  )}`}
                   className="border text-sm px-4 py-1.5 rounded-full transition border-gray-400 text-black dark:text-white hover:bg-gray-50/50 dark:hover:bg-gray-800"
                 >
                   Sign-In

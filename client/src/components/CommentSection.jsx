@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { Comment } from "./Comment";
 import { Button, Modal, ModalBody, ModalHeader } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { useLocation } from "react-router-dom";
 
 export const CommentSection = ({ postId }) => {
   const { currentUser } = useSelector((state) => state.user);
@@ -16,6 +17,8 @@ export const CommentSection = ({ postId }) => {
 
   const [openModal, setOpenModal] = useState(false);
   const [commentToDelete, setCommnetToDelete] = useState(null);
+
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,7 +83,11 @@ export const CommentSection = ({ postId }) => {
 
   const handleLike = async (commentId) => {
     if (!currentUser) {
-      navigate("/sign-in");
+      navigate(
+        `/sign-in?redirect=${encodeURIComponent(
+          location.pathname + location.search
+        )}`
+      );
       return;
     }
     try {
@@ -154,7 +161,12 @@ export const CommentSection = ({ postId }) => {
       ) : (
         <div className="flex gap-2 items-center">
           <p>You must Login to comment</p>
-          <Link className="underline" to={"/sign-in"}>
+          <Link
+            className="underline"
+            to={`/sign-in?redirect=${encodeURIComponent(
+              location.pathname + location.search
+            )}`}
+          >
             Signin
           </Link>
         </div>
