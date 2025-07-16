@@ -335,7 +335,9 @@ const Header = () => {
                       </>
                     ) : (
                       <Link
-                        to="/sign-in"
+                        to={`/sign-in?redirect=${encodeURIComponent(
+                          location.pathname + location.search
+                        )}`}
                         onClick={() => setMobileMenuOpen(false)}
                         className="block w-full text-center border px-4 py-2 rounded-full bg-blue-500 font-semibold border-teal-500 dark:border-teal-500 text-white dark:text-gray-100 hover:bg-blue-600 dark:hover:bg-blue-700 transition"
                       >

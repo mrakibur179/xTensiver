@@ -66,12 +66,13 @@ const Home = () => {
         )}
 
         {!loading && !error && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
             {otherPosts.map((post) => (
               <Link
                 key={post._id}
                 to={`/post/${post.slug}`}
-                className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 flex flex-col"
+                className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md md:hover:shadow-lg transition-transform duration-300 flex flex-col"
+                style={{ willChange: "transform" }}
               >
                 {/* Image */}
                 <div className="overflow-hidden relative">
@@ -79,39 +80,37 @@ const Home = () => {
                     <img
                       src={post.poster}
                       alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-102 transition duration-500"
+                      className="w-full h-full object-cover md:group-hover:scale-102 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
 
-                  {/* Tag Badge */}
+                  {/* Simplified Tags */}
                   {post.tags?.length > 0 && (
-                    <span className="absolute bottom-2 left-0 text-white flex gap-2 text-xs font-semibold px-3 py-1 rounded-full transition">
-                      {post.tags?.slice(0, 2).map((tag, index) => (
+                    <div className="absolute bottom-2 left-2 flex gap-2">
+                      {post.tags.slice(0, 2).map((tag, index) => (
                         <span
                           key={index}
-                          className="backdrop-blur-[6px] group-hover:bg-gray-950/60 bg-gray-800/40 text-white text-xs font-semibold px-3 py-[6px] rounded-full shadow-sm drop-shadow-md hover:brightness-110 transition"
+                          className="bg-gray-800/90 text-white text-xs font-semibold px-3 py-[6px] rounded-full shadow-sm"
                         >
                           {tag}
                         </span>
                       ))}
-                    </span>
+                    </div>
                   )}
                 </div>
 
                 {/* Content */}
                 <div className="p-4 flex flex-col flex-grow">
-                  <h3 className="text-lg font-semibold group-hover:text-blue-600 mb-1">
+                  <h3 className="text-lg font-semibold md:group-hover:text-blue-600 mb-1">
                     {post.title}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">
                     {post.description}
                   </p>
                   <div className="text-xs text-gray-400 mt-auto">
-                    {new Date(post.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {new Date(post.createdAt).toLocaleDateString()}
                   </div>
                 </div>
               </Link>
