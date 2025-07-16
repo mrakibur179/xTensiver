@@ -28,7 +28,7 @@ const Home = () => {
     fetchPosts();
   }, []);
 
-  const otherPosts = posts.slice(0, 6);
+  const otherPosts = posts.slice(0, 3);
 
   return (
     <main className="bg-slate-200 dark:bg-slate-800">
