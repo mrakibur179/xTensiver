@@ -14,6 +14,10 @@ const commentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    parentCommentId: {
+      type: String,
+      default: null, // null = top-level comment
+    },
     likes: {
       type: Array,
       default: [],

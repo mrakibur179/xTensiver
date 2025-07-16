@@ -3,7 +3,7 @@ import { errorHandler } from "../utils/error.js";
 
 export const createComment = async (req, res, next) => {
   try {
-    const { content, postId, userId } = req.body;
+    const { content, postId, userId, parentCommentId = null } = req.body;
 
     if (userId !== req.user.id) {
       return res.status(403).json(403, "Unauthorized to create comment");
@@ -13,6 +13,7 @@ export const createComment = async (req, res, next) => {
       content,
       postId,
       userId,
+      parentCommentId,
     });
 
     await newComment.save();
@@ -25,11 +26,20 @@ export const createComment = async (req, res, next) => {
 
 export const getPostComments = async (req, res, next) => {
   try {
-    const comments = await Comment.find({
+    const allComments = await Comment.find({
       postId: req.params.postId,
     }).sort({ createdAt: -1 });
 
-    res.status(200).json(comments);
+    const commentsByParent = {};
+    allComments.forEach((comment) => {
+      const parentId = comment.parentCommentId || "root";
+      if (!commentsByParent[parentId]) {
+        commentsByParent[parentId] = [];
+      }
+      commentsByParent[parentId].push(comment);
+    });
+
+    res.status(200).json(commentsByParent);
   } catch (error) {
     next(error);
   }

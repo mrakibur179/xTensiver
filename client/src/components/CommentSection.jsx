@@ -1,85 +1,91 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Comment } from "./Comment";
 import { Button, Modal, ModalBody, ModalHeader } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { useLocation } from "react-router-dom";
 
 export const CommentSection = ({ postId }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [comment, setComment] = useState("");
-  const [error, setError] = useState(null);
-  const [comments, setComments] = useState([]);
-  const navigate = useNavigate();
-
+  const [comments, setComments] = useState({});
   const [openModal, setOpenModal] = useState(false);
-  const [commentToDelete, setCommnetToDelete] = useState(null);
+  const [commentToDelete, setCommentToDelete] = useState(null);
 
+  const navigate = useNavigate();
   const location = useLocation();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, parentCommentId = null) => {
     e.preventDefault();
 
-    const trimmedComment = comment.trim();
-
-    if (trimmedComment.length > 200) {
-      alert("Comment cannot exceed 200 characters");
-      return;
-    }
-
-    if (trimmedComment.trim() === "") {
-      toast.error("Comment cannot be empty");
-      return;
-    }
+    const trimmed = comment.trim();
+    if (!trimmed) return toast.error("Comment cannot be empty");
+    if (trimmed.length > 200) return toast.error("Comment too long");
 
     try {
       const res = await fetch("/api/comment/create", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          content: trimmedComment,
+          content: trimmed,
           postId,
           userId: currentUser._id,
+          parentCommentId,
         }),
       });
 
       const data = await res.json();
-
       if (res.ok) {
         setComment("");
-        setComments((prev) => [data, ...prev]);
-        setError(null);
-        toast.success("Comment added successfully");
+        setComments((prev) => {
+          const key = parentCommentId || "root";
+          return {
+            ...prev,
+            [key]: [data, ...(prev[key] || [])],
+          };
+        });
+        toast.success("Comment added!");
       } else {
         toast.error(data.message || "Failed to add comment");
-        setError(data.message);
       }
     } catch (error) {
-      setError(error);
-      toast.error(error.message || "An error occurred while adding comment");
+      toast.error(error.message);
     }
   };
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const res = await fetch(`/api/comment/getPostComments/${postId}`);
-        const data = await res.json();
-        if (res.ok) {
-          setComments(data);
-        }
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
+  const handleReply = async (parentCommentId, replyText, e) => {
+    e.preventDefault();
+    if (!replyText.trim()) return toast.error("Reply cannot be empty");
+    try {
+      const res = await fetch("/api/comment/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: replyText,
+          postId,
+          userId: currentUser._id,
+          parentCommentId,
+        }),
+      });
 
-    fetchComments();
-  }, [postId]);
+      const data = await res.json();
+      if (res.ok) {
+        setComments((prev) => {
+          const key = parentCommentId || "root";
+          return {
+            ...prev,
+            [key]: [data, ...(prev[key] || [])],
+          };
+        });
+        toast.success("Reply added!");
+      } else {
+        toast.error(data.message || "Failed to add reply");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   const handleLike = async (commentId) => {
     if (!currentUser) {
@@ -90,6 +96,7 @@ export const CommentSection = ({ postId }) => {
       );
       return;
     }
+
     try {
       const res = await fetch(`/api/comment/likeComment/${commentId}`, {
         method: "PUT",
@@ -97,36 +104,43 @@ export const CommentSection = ({ postId }) => {
       const data = await res.json();
 
       if (res.ok) {
-        setComments(
-          comments.map((comment) =>
-            comment._id === commentId
-              ? {
-                  ...comment,
-                  likes: data.likes,
-                  numberOfLikes: data.likes.length,
-                }
-              : comment
-          )
-        );
+        setComments((prev) => {
+          const updated = { ...prev };
+          Object.keys(updated).forEach((key) => {
+            updated[key] = updated[key].map((comment) =>
+              comment._id === commentId
+                ? {
+                    ...comment,
+                    likes: data.likes,
+                    numberOfLikes: data.likes.length,
+                  }
+                : comment
+            );
+          });
+          return updated;
+        });
       } else {
-        console.log(data.message);
+        toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
   };
 
-  const handleEdit = async (comment, editedComment) => {
-    setComments(
-      comments.map((c) =>
-        c._id === comment._id ? { ...c, content: editedComment } : c
-      )
-    );
+  const handleEdit = (comment, newContent) => {
+    setComments((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((key) => {
+        updated[key] = updated[key].map((c) =>
+          c._id === comment._id ? { ...c, content: newContent } : c
+        );
+      });
+      return updated;
+    });
   };
 
   const handleDelete = async (commentId) => {
     setOpenModal(false);
-
     try {
       const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
         method: "DELETE",
@@ -134,61 +148,104 @@ export const CommentSection = ({ postId }) => {
       const data = await res.json();
 
       if (res.ok) {
-        setComments(comments.filter((c) => c._id !== commentId));
-        toast.success("Comment Deleted.");
+        setComments((prev) => {
+          const updated = {};
+          for (const key in prev) {
+            updated[key] = prev[key].filter((c) => c._id !== commentId);
+          }
+          return updated;
+        });
+        toast.success("Comment deleted.");
       } else {
         toast.error(data.message);
-        console.log(data.message);
       }
     } catch (error) {
-      console.log(error.message);
+      toast.error(error.message);
     }
   };
 
+  const renderComments = (parentId = "root") => {
+    return (comments[parentId] || []).map((comment) => (
+      <div key={comment._id} className={parentId !== "root" ? "ml-6" : ""}>
+        <Comment
+          comment={comment}
+          onLike={handleLike}
+          onEdit={handleEdit}
+          onDelete={(id) => {
+            setOpenModal(true);
+            setCommentToDelete(id);
+          }}
+          handleReply={handleReply}
+        />
+        {renderComments(comment._id)}
+      </div>
+    ));
+  };
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const res = await fetch(`/api/comment/getPostComments/${postId}`);
+        const data = await res.json();
+        if (res.ok) {
+          setComments(data); // ✅ directly set the grouped object
+        } else {
+          toast.error(data.message || "Failed to load comments");
+        }
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Failed to load comments");
+      }
+    };
+
+    fetchComments();
+  }, [postId]);
+
   return (
-    <div>
+    <div className="w-full">
+      {/* User Info or Sign-in Prompt */}
       {currentUser ? (
         <div className="flex items-center gap-2">
-          <p>Signed in as: </p>
+          <p>Signed in as:</p>
           <img
-            className="w-6 h-6 object-cover rounded-full"
             src={currentUser.profilePicture}
-            alt={currentUser.profilePicture}
+            alt="User"
+            className="w-6 h-6 object-cover rounded-full"
           />
-          <Link className="underline" to={`/dashboard?tab=profile`}>
+          <Link to="/dashboard?tab=profile" className="underline">
             @{currentUser.username}
           </Link>
         </div>
       ) : (
         <div className="flex gap-2 items-center">
-          <p>You must Login to comment</p>
+          <p>You must login to comment</p>
           <Link
             className="underline"
             to={`/sign-in?redirect=${encodeURIComponent(
               location.pathname + location.search
             )}`}
           >
-            Signin
+            Sign In
           </Link>
         </div>
       )}
 
+      {/* Comment Form */}
       {currentUser && (
         <form onSubmit={handleSubmit} className="border p-6 rounded-md mt-4">
           <textarea
-            onChange={(e) => setComment(e.target.value)}
             value={comment}
-            placeholder="Add a comment..."
+            onChange={(e) => setComment(e.target.value)}
             rows="3"
             maxLength="200"
-            className="border w-full px-4 py-2 rounded-md"
+            placeholder="Add a comment..."
+            className="w-full border px-4 py-2 rounded-md"
           />
-
-          <div className="flex flex-wrap justify-between gap-4 py-4">
-            <p>{200 - comment.length} Characters reamaining</p>
+          <div className="flex justify-between items-center mt-2">
+            <span>{200 - comment.length} characters remaining</span>
             <button
               type="submit"
-              className="bg-blue-400 cursor-pointer hover:shadow-md transition-all duration-300 px-4 py-2 rounded-sm text-black"
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
             >
               Submit
             </button>
@@ -196,32 +253,18 @@ export const CommentSection = ({ postId }) => {
         </form>
       )}
 
-      {comments.length === 0 ? (
-        <p className="text-sm my-5">No Comments Yet!!!</p>
-      ) : (
-        <div className="my-5">
-          <p>
-            Comments:{" "}
-            <span className="border px-4 py-1 rounded-full">
-              {comments.length}
-            </span>
-          </p>
+      {/* Comments */}
+      <div className="mt-6">
+        <p className="text-md font-medium">
+          Comments{" "}
+          <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">
+            {(comments["root"] || []).length}
+          </span>
+        </p>
+        <div className="mt-4">{renderComments()}</div>
+      </div>
 
-          {comments.map((comment) => (
-            <Comment
-              key={comment._id}
-              comment={comment}
-              onLike={handleLike}
-              onEdit={handleEdit}
-              onDelete={(commentId) => {
-                setOpenModal(true);
-                setCommnetToDelete(commentId);
-              }}
-            />
-          ))}
-        </div>
-      )}
-
+      {/* Delete Modal */}
       <Modal
         show={openModal}
         size="md"
@@ -231,16 +274,16 @@ export const CommentSection = ({ postId }) => {
         <ModalHeader />
         <ModalBody>
           <div className="text-center">
-            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
-            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400" />
+            <h3 className="text-lg text-gray-700 mb-5">
               Are you sure you want to delete this comment?
             </h3>
             <div className="flex justify-center gap-4">
               <Button color="red" onClick={() => handleDelete(commentToDelete)}>
-                Yes, I'm sure
+                Yes, I’m sure
               </Button>
-              <Button color="alternative" onClick={() => setOpenModal(false)}>
-                No, cancel
+              <Button color="gray" onClick={() => setOpenModal(false)}>
+                Cancel
               </Button>
             </div>
           </div>
