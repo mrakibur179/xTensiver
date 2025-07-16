@@ -90,7 +90,7 @@ export const deleteComment = async (req, res, next) => {
       return next(errorHandler(403, "Comment Not Found!"));
     }
 
-    if (comment.userId !== req.user.id && !req.user.isAdmin) {
+    if (comment.userId !== req.user.id && !req.user.isSuperAdmin) {
       return next(errorHandler(403, "You cannot delete this comment!"));
     }
 

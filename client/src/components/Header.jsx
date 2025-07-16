@@ -1,13 +1,33 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
-import { FaMoon, FaSearch, FaSun } from "react-icons/fa";
+import {
+  Link,
+  Navigate,
+  NavLink,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { MdClose, MdOutlineMenu } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import Searchbox from "./Searchbox";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProfileDropdown from "../ui/ProfileDropdown";
 import SearchModal from "./SearchModal";
 import ThemeTogglerButton from "../ui/ThemeTogglerButton";
+import {
+  Dropdown,
+  DropdownDivider,
+  DropdownHeader,
+  DropdownItem,
+} from "flowbite-react";
+import {
+  HiClipboardList,
+  HiCog,
+  HiCurrencyDollar,
+  HiLogout,
+  HiViewGrid,
+} from "react-icons/hi";
+import { toast } from "react-toastify";
+import { signOutSuccess } from "../redux/user/userSlice";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -15,7 +35,9 @@ const Header = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const menuRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -109,6 +131,26 @@ const Header = () => {
         ease: "easeInOut",
       },
     },
+  };
+
+  const handleSignOut = async () => {
+    setMobileMenuOpen(false);
+
+    try {
+      const res = await fetch(`/api/user/signout`, {
+        method: "POST",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOutSuccess());
+        toast.success("Signed out successfully!");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -220,7 +262,7 @@ const Header = () => {
                 animate="visible"
                 exit="hidden"
                 variants={mobileMenuVariants}
-                className="fixed md:hidden inset-0 left-16 shadow-lg pt-20 min-h-screen z-40 bg-purple-100 dark:bg-gray-950 backdrop-blur-lg p-6 overflow-y-auto"
+                className="fixed md:hidden inset-0 left-20 shadow-lg pt-20 min-h-screen z-40 bg-slate-100/98 dark:bg-gray-950/98 backdrop-blur-[6px] p-6 overflow-y-auto"
               >
                 {/* Nav links */}
                 <nav className="flex flex-col space-y-4 mb-6">
@@ -239,16 +281,58 @@ const Header = () => {
                     </NavLink>
                   ))}
 
+                  <div className="self-center">
+                    <ThemeTogglerButton />
+                  </div>
+
                   {/* Auth */}
                   <div className="mt-4">
                     {currentUser ? (
-                      <Link
-                        to="/dashboard?tab=profile"
-                        className="block w-full text-center border px-4 py-2 rounded-full bg-blue-500 font-semibold border-teal-500 dark:border-teal-500 text-white dark:text-gray-100 hover:bg-blue-600 dark:hover:bg-blue-700 transition"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Dashboard
-                      </Link>
+                      <>
+                        <div className="flex justify-start w-fit px-6 pl-3 py-2 rounded-full gap-4 items-center">
+                          <img
+                            src={currentUser.profilePicture}
+                            className="rounded-full w-8 h-8 object-cover"
+                          />
+
+                          <Dropdown
+                            label={currentUser.username}
+                            inline
+                            placement="bottom"
+                          >
+                            <DropdownHeader>
+                              <span className="block cursor-pointer truncate text-sm font-medium">
+                                {currentUser.email}
+                              </span>
+                            </DropdownHeader>
+                            <DropdownItem
+                              icon={HiClipboardList}
+                              onClick={() => {
+                                navigate("/dashboard/create-post");
+                                setMobileMenuOpen(false);
+                              }}
+                            >
+                              Create Post
+                            </DropdownItem>
+                            <DropdownItem
+                              icon={HiViewGrid}
+                              onClick={() => {
+                                navigate("/dashboard?tab=profile");
+                                setMobileMenuOpen(false);
+                              }}
+                            >
+                              Dashboard
+                            </DropdownItem>
+                            <DropdownDivider />
+                            <DropdownItem
+                              icon={HiLogout}
+                              onClick={handleSignOut}
+                            >
+                              Sign out
+                            </DropdownItem>
+                          </Dropdown>
+                        </div>
+                      </>
                     ) : (
                       <Link
                         to="/sign-in"
@@ -258,10 +342,6 @@ const Header = () => {
                         Sign-In
                       </Link>
                     )}
-                  </div>
-
-                  <div className="self-center mt-8">
-                    <ThemeTogglerButton />
                   </div>
                 </nav>
 

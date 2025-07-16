@@ -124,7 +124,7 @@ export const Comment = ({ comment, onLike, onEdit, onDelete }) => {
 
               <div className="flex gap-2 self-start items-center">
                 <span className="mt-[4px]">
-                  {currentUser && currentUser._id === comment.userId && (
+                  {currentUser && currentUser?._id === comment.userId && (
                     <button
                       className="text-blue-400 cursor-pointer text-lg"
                       onClick={handleEdit}
@@ -133,7 +133,9 @@ export const Comment = ({ comment, onLike, onEdit, onDelete }) => {
                     </button>
                   )}
                 </span>
-                {currentUser?.isAdmin && (
+
+                {(currentUser?.isSuperAdmin ||
+                  currentUser?._id === comment.userId) && (
                   <button
                     className="text-red-400 cursor-pointer text-sm"
                     onClick={() => onDelete(comment._id)}

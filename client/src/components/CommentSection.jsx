@@ -137,6 +137,7 @@ export const CommentSection = ({ postId }) => {
         setComments(comments.filter((c) => c._id !== commentId));
         toast.success("Comment Deleted.");
       } else {
+        toast.error(data.message);
         console.log(data.message);
       }
     } catch (error) {
