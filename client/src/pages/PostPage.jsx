@@ -12,6 +12,8 @@ export const PostPage = () => {
   const [error, setError] = useState(null);
   const [post, setPost] = useState(null);
 
+  const [recentArticles, setRecentArticles] = useState([]);
+
   const { currentUser } = useSelector((state) => state.user);
 
   // Save scroll position before reload
@@ -57,7 +59,20 @@ export const PostPage = () => {
       }
     };
 
+    const fetchRecentArticles = async () => {
+      try {
+        const res = await fetch("/api/post/getposts?limit=3");
+        const data = await res.json();
+        if (res.ok) {
+          setRecentArticles(data.posts);
+        }
+      } catch (error) {
+        console.error("Error fetching recent articles:", error);
+      }
+    };
+
     fetchPost();
+    fetchRecentArticles();
   }, [postSlug]);
 
   if (isLoading)
@@ -75,18 +90,22 @@ export const PostPage = () => {
     );
 
   return (
-    <div className="px-4 bg-slate-100 dark:bg-slate-800 py-20 text-gray-800 dark:text-gray-200 overflow-x-hidden">
-      <div className="max-w-5xl mx-auto">
+    <div className="px-4 mx-auto max-w-7xl flex items-start flex-col lg:flex-row gap-4 justify-center py-20 text-gray-800 dark:text-gray-200 overflow-x-hidden">
+      <div className="min-w-2/3  mx-auto">
         <span className="py-4">
           Home {`>`} posts {`>`} {postSlug}
         </span>
 
         {post.poster && (
-          <img
-            src={post.poster}
-            alt={post.title}
-            className="min-w-[12rem] w-screen sm:w-1/2 h-full mt-4 mx-auto object-cover rounded-md mb-6 shadow"
-          />
+          <div className="aspect-[16/9] py-4 w-full overflow-hidden">
+            <img
+              src={post.poster}
+              alt={post.title}
+              className="w-full h-full object-cover md:group-hover:scale-102 rounded-md transition-transform duration-500"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
         )}
 
         <h1 className="text-2xl flex gap-8 items-center sm:text-4xl font-bold">
@@ -144,6 +163,69 @@ export const PostPage = () => {
         </div>
 
         <CommentSection postId={post._id} />
+      </div>
+
+      <div className="min-w-1/3 mx-auto">
+        <div className="sticky top-24">
+          <h2 className="text-2xl font-bold mb-4">Recent Articles</h2>
+          <div className="space-y-4">
+            {recentArticles.map((article) => (
+              <Link
+                key={article._id}
+                to={`/post/${article.slug}`}
+                className="block group p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200 hover:shadow-sm"
+              >
+                <div className="flex gap-4">
+                  {article.poster && (
+                    <div className="flex-shrink-0 relative w-20 h-16 rounded-lg overflow-hidden">
+                      <img
+                        src={article.poster}
+                        alt={article.title}
+                        className="w-full h-full object-cover transition-transform duration-300"
+                        onError={(e) => {
+                          e.target.src =
+                            "https://via.placeholder.com/80x64?text=No+Image";
+                          e.target.className =
+                            "w-full h-full object-cover bg-gray-100 dark:bg-gray-600";
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                      {article.title}
+                    </h3>
+
+                    {/* {article.description && (
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
+                        {article.description}
+                      </p>
+                    )} */}
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {new Date(article.updatedAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="py-4">
+            <h1 className="py-4">Popular Tags:</h1>
+            {recentArticles.map((article) => (
+              <Link
+                className="mr-2 w-fit px-3 py-1 rounded-full text-black bg-gray-200"
+                key={article.tags}
+              >
+                {article.tags[0]}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

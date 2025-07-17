@@ -166,7 +166,14 @@ export const CommentSection = ({ postId }) => {
 
   const renderComments = (parentId = "root") => {
     return (comments[parentId] || []).map((comment) => (
-      <div key={comment._id} className={parentId !== "root" ? "ml-6" : ""}>
+      <div
+        key={comment._id}
+        className={`${
+          parentId !== "root"
+            ? "ml-6"
+            : "border border-gray-300 dark:border-gray-600 mt-8 p-6"
+        } rounded-md`}
+      >
         <Comment
           comment={comment}
           onLike={handleLike}
@@ -232,14 +239,17 @@ export const CommentSection = ({ postId }) => {
 
       {/* Comment Form */}
       {currentUser && (
-        <form onSubmit={handleSubmit} className="border p-6 rounded-md mt-4">
+        <form
+          onSubmit={handleSubmit}
+          className="border p-6 border-gray-400 dark:border-gray-600 rounded-md mt-4"
+        >
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows="3"
             maxLength="200"
             placeholder="Add a comment..."
-            className="w-full border px-4 py-2 rounded-md"
+            className="w-full border border-gray-400 dark:border-gray-600 px-4 py-2 rounded-md"
           />
           <div className="flex justify-between items-center mt-2">
             <span>{200 - comment.length} characters remaining</span>
