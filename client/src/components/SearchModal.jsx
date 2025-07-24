@@ -1,6 +1,20 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
-const SearchModal = ({ setIsModalOpen }) => {
+const SearchModal = ({ setIsModalOpen, searchTerm, setSearchTerm }) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim() === "") return;
+
+    navigate(
+      `/search?searchTerm=${encodeURIComponent(searchTerm)}` // Ensure search term is lowercase
+    );
+    setIsModalOpen(false);
+    setSearchTerm(""); // Clear search input
+  };
+
   return (
     <div
       aria-hidden="false"
@@ -41,22 +55,26 @@ const SearchModal = ({ setIsModalOpen }) => {
             </svg>
           </button>
         </div>
-        <input
-          type="text"
-          placeholder="Search blogs or articles…"
-          className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <div className="flex justify-end mt-4">
-          <button
-            onClick={() => {
-              /* search action */
-              alert("Funtionality not yet applied");
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Search blogs or articles…"
+            className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
             }}
-            className="bg-blue-500 px-4 py-2 rounded-md font-semibold text-gray-100 hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
-          >
-            Search
-          </button>
-        </div>
+            autoFocus
+          />
+          <div className="flex justify-end mt-4">
+            <button
+              type="submit"
+              className="bg-blue-500 px-4 py-2 rounded-md font-semibold text-gray-100 hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            >
+              Search
+            </button>
+          </div>
+        </form>
       </motion.div>
     </div>
   );

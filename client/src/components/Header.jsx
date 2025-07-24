@@ -19,13 +19,7 @@ import {
   DropdownHeader,
   DropdownItem,
 } from "flowbite-react";
-import {
-  HiClipboardList,
-  HiCog,
-  HiCurrencyDollar,
-  HiLogout,
-  HiViewGrid,
-} from "react-icons/hi";
+import { HiClipboardList, HiLogout, HiViewGrid } from "react-icons/hi";
 import { toast } from "react-toastify";
 import { signOutSuccess } from "../redux/user/userSlice";
 
@@ -43,10 +37,20 @@ const Header = () => {
   const dropdownRef = useRef(null);
 
   const location = useLocation();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTermFromUrl);
+    }
+  }, [location.search]);
 
   const navLinks = [
     { link: "/", title: "Home" },
-    { link: "/posts", title: "Posts" },
+    { link: "/search", title: "Posts" },
     { link: "/about", title: "About" },
     { link: "/contact", title: "Contact" },
   ];
@@ -305,19 +309,21 @@ const Header = () => {
                                 {currentUser.email}
                               </span>
                             </DropdownHeader>
-                            <DropdownItem
-                              icon={HiClipboardList}
-                              onClick={() => {
-                                navigate("/dashboard/create-post");
-                                setMobileMenuOpen(false);
-                              }}
-                            >
-                              Create Post
-                            </DropdownItem>
+                            {currentUser.isAdmin && (
+                              <DropdownItem
+                                icon={HiClipboardList}
+                                onClick={() => {
+                                  navigate("/create-post");
+                                  setMobileMenuOpen(false);
+                                }}
+                              >
+                                Create Post
+                              </DropdownItem>
+                            )}
                             <DropdownItem
                               icon={HiViewGrid}
                               onClick={() => {
-                                navigate("/dashboard?tab=profile");
+                                navigate("/dashboard?tab=main");
                                 setMobileMenuOpen(false);
                               }}
                             >
@@ -355,7 +361,13 @@ const Header = () => {
       </div>
 
       {/* Modal for search */}
-      {isModalOpen && <SearchModal setIsModalOpen={setIsModalOpen} />}
+      {isModalOpen && (
+        <SearchModal
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          setIsModalOpen={setIsModalOpen}
+        />
+      )}
     </header>
   );
 };

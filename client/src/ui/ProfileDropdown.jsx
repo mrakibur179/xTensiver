@@ -94,7 +94,11 @@ const ProfileDropdown = ({
             )}
 
             <Link
-              to="/dashboard?tab=profile"
+              to={
+                currentUser.isSuperAdmin
+                  ? "/dashboard?tab=main"
+                  : "/dashboard?tab=profile"
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 setDropdownOpen(false);

@@ -9,10 +9,12 @@ const commentSchema = new mongoose.Schema(
     postId: {
       type: String,
       required: true,
+      ref: "Post", // Assuming you have a Post model
     },
     userId: {
       type: String,
       required: true,
+      ref: "User", // Assuming you have a User model
     },
     parentCommentId: {
       type: String,

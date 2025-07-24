@@ -44,7 +44,6 @@ export const getposts = async (req, res, next) => {
     const sortDirection = req.query.order === "asc" ? 1 : -1;
     const posts = await Post.find({
       ...(req.query.userId && { userId: req.query.userId }),
-      ...(req.query.category && { category: req.query.category }),
       ...(req.query.slug && { slug: req.query.slug }),
       ...(req.query.postId && { _id: req.query.postId }),
       ...(req.query.searchTerm && {
@@ -53,13 +52,19 @@ export const getposts = async (req, res, next) => {
           { content: { $regex: req.query.searchTerm, $options: "i" } },
         ],
       }),
+      ...(req.query.tag &&
+        req.query.tag !== "All" && {
+          tags: {
+            $in: [new RegExp(req.query.tag, "i")], // "i" for case-insensitive
+          },
+        }),
     })
       .sort({ updatedAt: sortDirection })
       .skip(startIndex)
       .limit(limit)
       .populate("userId", "username");
 
-    const totalPost = await Post.countDocuments();
+    const totalPosts = await Post.countDocuments();
 
     const now = new Date();
 
@@ -75,7 +80,7 @@ export const getposts = async (req, res, next) => {
 
     res.status(200).json({
       posts,
-      totalPost,
+      totalPosts,
       lastMonthPosts,
     });
   } catch (error) {
@@ -155,5 +160,15 @@ export const updatepost = async (req, res, next) => {
     res.status(200).json(updatedPost);
   } catch (error) {
     next(error);
+  }
+};
+
+export const getAllTags = async (req, res, next) => {
+  try {
+    const posts = await Post.find({}, "tags");
+    const allTags = [...new Set(posts.flatMap((post) => post.tags))]; // Remove duplicates
+    res.status(200).json(allTags);
+  } catch (err) {
+    next(err);
   }
 };

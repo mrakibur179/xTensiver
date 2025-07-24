@@ -97,7 +97,7 @@ export const PostPage = () => {
         </span>
 
         {post.poster && (
-          <div className="aspect-[16/9] py-4 w-full overflow-hidden">
+          <div className="aspect-[16/9] w-full my-4 overflow-hidden">
             <img
               src={post.poster}
               alt={post.title}
@@ -162,45 +162,40 @@ export const PostPage = () => {
           <CallToAction />
         </div>
 
-        <CommentSection postId={post._id} />
+        <CommentSection postId={post._id} post={post} />
       </div>
 
-      <div className="min-w-1/3 mx-auto">
-        <div className="sticky top-24">
-          <h2 className="text-2xl font-bold mb-4">Recent Articles</h2>
-          <div className="space-y-4">
-            {recentArticles.map((article) => (
-              <Link
-                key={article._id}
-                to={`/post/${article.slug}`}
-                className="block group p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200 hover:shadow-sm"
-              >
-                <div className="flex gap-4">
-                  {article.poster && (
-                    <div className="flex-shrink-0 relative w-20 h-16 rounded-lg overflow-hidden">
-                      <img
-                        src={article.poster}
-                        alt={article.title}
-                        className="w-full h-full object-cover transition-transform duration-300"
-                        onError={(e) => {
-                          e.target.src =
-                            "https://via.placeholder.com/80x64?text=No+Image";
-                          e.target.className =
-                            "w-full h-full object-cover bg-gray-100 dark:bg-gray-600";
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                      {article.title}
-                    </h3>
+      <div className="min-w-1/3 mx-auto w-full lg:max-w-sm sticky">
+        <h2 className="text-2xl font-bold mb-2">Recent Articles</h2>
+        <div className="space-y-4">
+          {recentArticles.map((article) => (
+            <Link
+              key={article._id}
+              to={`/post/${article.slug}`}
+              className="block group px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200 hover:shadow-sm"
+            >
+              <div className="flex gap-4">
+                {article.poster && (
+                  <div className="flex-shrink-0 relative w-20 h-13 mt-1.5 rounded-sm overflow-hidden">
+                    <img
+                      src={article.poster}
+                      alt={article.title}
+                      className="w-full h-full object-cover transition-transform duration-300"
+                      onError={(e) => {
+                        e.target.src =
+                          "https://via.placeholder.com/80x64?text=No+Image";
+                        e.target.className =
+                          "w-full h-full object-cover bg-gray-100 dark:bg-gray-600";
+                      }}
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                    {article.title}
+                  </h3>
 
-                    {/* {article.description && (
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
-                        {article.description}
-                      </p>
-                    )} */}
+                  <span className="flex flex-col justify-start items-start">
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       {new Date(article.updatedAt).toLocaleDateString("en-US", {
                         year: "numeric",
@@ -208,23 +203,32 @@ export const PostPage = () => {
                         day: "numeric",
                       })}
                     </p>
-                  </div>
+                    <p className="text-sm ">
+                      by -{" "}
+                      <span className="text-blue-500 group-hover:underline">
+                        {article.userId.username}
+                      </span>
+                    </p>
+                  </span>
                 </div>
-              </Link>
-            ))}
-          </div>
+              </div>
+            </Link>
+          ))}
+        </div>
 
-          <div className="py-4">
-            <h1 className="py-4">Popular Tags:</h1>
-            {recentArticles.map((article) => (
+        <div className="py-4">
+          <h1 className="py-4">Popular Tags:</h1>
+          {[...new Set(recentArticles.flatMap((article) => article.tags))].map(
+            (tag) => (
               <Link
-                className="mr-2 w-fit px-3 py-1 rounded-full text-black bg-gray-200"
-                key={article.tags}
+                key={tag}
+                to={`/search?searchTerm=&tag=${tag}`}
+                className="inline-block mr-2 mb-2 px-3 py-1 text-sm rounded-full text-blue-800 dark:text-blue-200 bg-gray-200 dark:bg-gray-700 hover:underline transition-colors duration-200"
               >
-                {article.tags[0]}
+                #{tag}
               </Link>
-            ))}
-          </div>
+            )
+          )}
         </div>
       </div>
     </div>

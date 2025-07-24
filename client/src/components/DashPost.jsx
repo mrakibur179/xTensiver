@@ -41,7 +41,7 @@ export const DashPost = () => {
         if (!res.ok) throw new Error(data.message || "Failed to fetch posts");
 
         setUserPosts(data.posts);
-        setShowMore(data.posts.length >= 9);
+        setShowMore(data.posts.length === 9);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -92,6 +92,10 @@ export const DashPost = () => {
       console.error("Delete post error:", error.message);
     }
   };
+
+  if (!currentUser.isAdmin && !currentUser.isSuperAdmin) {
+    return <div className="text-center text-red-500 mt-4">Access Denied</div>;
+  }
 
   return (
     <div className="table-auto md:mx-auto scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-600 dark:scrollbar-thumb-slate-800">
@@ -158,7 +162,7 @@ export const DashPost = () => {
                     </p>
                   </TableCell>
                   <TableCell className="w-32 whitespace-nowrap px-4 py-2">
-                    {post.category}
+                    {post.tags[0] || "Uncategorized"}
                   </TableCell>
                   <TableCell className="w-20 px-2 py-2">
                     <Link

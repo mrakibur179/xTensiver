@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 export const Comment = ({
+  post,
   comment,
   onLike,
   onEdit,
@@ -42,8 +43,8 @@ export const Comment = ({
         if (res.ok) setUser(data);
         else throw new Error(data.message || "Failed to fetch user");
       } catch (err) {
-        console.error(err.message);
         setError(err.message);
+        console.error("Error fetching user:", err.message);
       } finally {
         setLoading(false);
       }
@@ -91,13 +92,13 @@ export const Comment = ({
 
   // UI Loading/Error State
   if (loading) return <div className="text-sm text-gray-500">Loading...</div>;
-  if (error) return <div className="text-sm text-red-500">Error: {error}</div>;
   if (!user) return <div className="text-sm text-gray-500">User not found</div>;
+  if (error) return <div className="text-sm text-red-500">Error: {error}</div>;
 
   return (
-    <div className="mb-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+    <div className="overflow-hidden">
       {/* Parent Comment */}
-      <div className="p-4 bg-white dark:bg-gray-900">
+      <div className="p-4">
         <div className="flex gap-3">
           {/* Avatar */}
           <div className="flex-shrink-0">
@@ -115,8 +116,11 @@ export const Comment = ({
           {/* Main Body */}
           <div className="flex-1 min-w-0">
             {/* User Info */}
-            <div className="flex items-center gap-2">
-              <p className="font-semibold text-sm truncate">@{user.username}</p>
+            <div className="flex items-center flex-wrap gap-2">
+              <p className="font-semibold text-sm truncate">
+                @{user.username} {user._id === post.userId._id && "(Author)"}
+              </p>
+              {console.log(post.userId._id, user._id)}
               <span className="text-gray-400 text-xs">•</span>
               <p className="text-gray-500 text-xs whitespace-nowrap">
                 {moment(comment.createdAt).fromNow()}
@@ -158,7 +162,7 @@ export const Comment = ({
               ) : (
                 <div className="group">
                   <p className="text-sm text-gray-800 dark:text-gray-200 mt-1 mb-2 whitespace-pre-wrap break-words">
-                    {comment.content}
+                    {comment.content || "No content provided."}
                   </p>
 
                   {/* Action buttons */}
@@ -293,7 +297,7 @@ export const Comment = ({
                   {/* User Info */}
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-sm truncate">
-                      @{reply.user?.username}
+                      @{reply.user?.username || "Unknown User"}
                     </p>
                     <span className="text-gray-400 text-xs">•</span>
                     <p className="text-gray-500 text-xs whitespace-nowrap">
@@ -309,7 +313,7 @@ export const Comment = ({
 
                   {/* Reply Text */}
                   <p className="text-sm text-gray-800 dark:text-gray-200 mt-1 mb-1 whitespace-pre-wrap break-words">
-                    {reply.content}
+                    {reply.content || "No content provided."}
                   </p>
 
                   {/* Reply Actions */}

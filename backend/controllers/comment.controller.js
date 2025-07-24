@@ -110,3 +110,41 @@ export const deleteComment = async (req, res, next) => {
     next(error.message);
   }
 };
+
+export const getComments = async (req, res, next) => {
+  if (!req.user.isSuperAdmin) {
+    return next(
+      errorHandler(403, "You are not authorized to view all comments")
+    );
+  }
+
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.sortDirection === "desc" ? 1 : -1;
+
+    const comments = await Comment.find({})
+      .populate("postId", "title slug") // populate postId with its title
+      .populate("userId", "username profilePicture") // populate userId with its name and email
+      .lean()
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+
+    const totalComments = await Comment.countDocuments({});
+    const email = req.user.email;
+    const now = new Date();
+    const oneMonthAgo = new Date(now.setMonth(now.getMonth() - 1));
+    const lastMonthComments = await Comment.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+    res.status(200).json({
+      comments,
+      email,
+      totalComments,
+      lastMonthComments,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

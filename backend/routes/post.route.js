@@ -3,6 +3,7 @@ import { verifyToken } from "../utils/verifyUser.js";
 import {
   create,
   deletepost,
+  getAllTags,
   getposts,
   updatepost,
 } from "../controllers/post.controller.js";
@@ -24,5 +25,6 @@ router.put(
   fetchCurrentUser,
   updatepost
 );
+router.get("/tags", getAllTags);
 
 export default router;

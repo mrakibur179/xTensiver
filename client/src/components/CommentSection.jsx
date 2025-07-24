@@ -6,7 +6,7 @@ import { Comment } from "./Comment";
 import { Button, Modal, ModalBody, ModalHeader } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
-export const CommentSection = ({ postId }) => {
+export const CommentSection = ({ postId, post }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState({});
@@ -170,11 +170,12 @@ export const CommentSection = ({ postId }) => {
         key={comment._id}
         className={`${
           parentId !== "root"
-            ? "ml-6"
-            : "border border-gray-300 dark:border-gray-600 mt-8 p-6"
-        } rounded-md`}
+            ? "ml-6 border-t border-gray-200 dark:border-gray-700"
+            : "border border-gray-300 dark:border-gray-600 mt-8 p-1 rounded-md"
+        }`}
       >
         <Comment
+          post={post}
           comment={comment}
           onLike={handleLike}
           onEdit={handleEdit}

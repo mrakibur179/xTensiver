@@ -25,6 +25,19 @@ const CreatePost = () => {
     "Travel",
     "Education",
     "Lifestyle",
+    "Software",
+    "Business",
+    "Entertainment",
+    "Food",
+    "Finance",
+    "Science",
+    "Sports",
+    "Gaming",
+    "Art",
+    "Fashion",
+    "Photography",
+    "Music",
+    "Environment",
   ];
 
   const { quill, quillRef } = useQuill({

@@ -30,16 +30,18 @@
   width: 520px;
   max-width: 100%;
   height: auto;
+  overflow: hidden;
 }
 
 .ql-editor iframe {
   width: 100%;
-  max-width: 768px;
-  height: 400px;
+  max-width: 420px !important;
+  height: 560px !important;
   margin: 2rem auto;
   display: block;
+  box-shadow: none !important;
   border-radius: 8px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
 }
 
 .ql-editor pre {
