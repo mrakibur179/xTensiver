@@ -32,19 +32,19 @@ const Home = () => {
     fetchPosts();
   }, []);
 
-  const otherPosts = posts.slice(0, 3);
+  const otherPosts = posts.slice(0, 4);
 
   return (
     <main className="bg-slate-200 dark:bg-slate-800">
-      <div className="min-h-screen pt-16 text-gray-800 dark:text-gray-200 px-4 py-10 max-w-7xl mx-auto">
+      <div className="min-h-screen pt-16 text-gray-800 dark:text-gray-200 px-8 p-2 container mx-auto">
         {/* Hero Section */}
-        <section className="relative rounded-2xl dark:from-gray-800 dark:via-gray-900 dark:to-gray-950 text-gray-900 dark:text-white p-8 md:p-12 overflow-hidden">
+        <section className="relative rounded-2xl dark:from-gray-800 dark:via-gray-900 dark:to-gray-950 text-gray-900 px-0 md:px-8 lg:px-16 dark:text-white overflow-hidden">
           {/* <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-400/5 dark:to-purple-400/5"></div> */}
           <div className="relative z-10">
             <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
               {/* Text Content */}
               <div className="lg:w-4/5 text-center lg:text-left">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl py-8 font-bold leading-tight">
                   Stay Ahead with the Latest{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-400 dark:to-purple-500">
                     News
@@ -54,7 +54,7 @@ const Home = () => {
                   Explore deep dives into software, gadgets, and innovation.
                   {/* Curated content for tech lovers, developers, and creators. */}
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <div className="flex flex-col sm:flex-row gap-4 min-w-max justify-center lg:justify-start">
                   {currentUser?.isAdmin ? (
                     <Link
                       to={
@@ -62,21 +62,21 @@ const Home = () => {
                           ? "/dashboard?tab=main"
                           : "/dashboard?tab=profile"
                       }
-                      className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
+                      className="px-8 py-3 min-w-fit bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform"
                     >
                       Go to Dashboard
                     </Link>
                   ) : (
                     <Link
                       to="/sign-in"
-                      className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
+                      className="px-8 py-3 min-w-fit bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform"
                     >
                       Sign-In
                     </Link>
                   )}
                   <Link
                     to="/search"
-                    className="px-8 py-3 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700/80 text-gray-900 dark:text-white font-semibold rounded-lg shadow-lg transition-all duration-300 backdrop-blur-md border border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2"
+                    className="px-8 py-3 min-w-fit bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700/80 text-gray-900 dark:text-white font-semibold rounded-lg shadow-lg transition-all duration-300 backdrop-blur-md border border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2"
                   >
                     Browse Articles <FaArrowRight className="mt-0.5" />
                   </Link>
@@ -141,7 +141,7 @@ const Home = () => {
 
               {/* Posts Grid - Responsive columns */}
               {!loading && !error && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {otherPosts.map((post) => (
                     <PostCard key={post._id} post={post} />
                   ))}
@@ -160,7 +160,7 @@ const Home = () => {
                   Tech Reviews
                 </h2>
                 <Link
-                  to="/search?tag=reviews"
+                  to="/search?searchTerm=&tag=Technology"
                   className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 font-medium"
                 >
                   More in Tech Reviews <FaArrowRight className="mt-0.5" />
@@ -204,11 +204,11 @@ const Home = () => {
 
             {/* Advertisement / Side Banner */}
             <div className="w-full lg:w-[300px] flex-shrink-0">
-              <div className="rounded-xl max-w-68 min-h-64 mx-auto overflow-hidden shadow-lg">
+              <div className="rounded-xl max-w-74 h-full mx-auto overflow-hidden shadow-lg">
                 <img
                   src="/ad1.jpg"
                   alt="Advertisement"
-                  className="w-full h-auto object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>

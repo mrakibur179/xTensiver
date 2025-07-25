@@ -9,7 +9,7 @@ export const CallToAction = () => {
       <h2 className="text-xl md:text-5xl font-bold mb-4 text-center">
         Read The More Interesting Blogs
       </h2>
-      <p className="text-sm md:text-xl px-4 w-4/5 mx-auto text-center mb-6">
+      <p className="text-sm md:text-xl px-8 w-full md:w-4/5 mx-auto text-center mb-6">
         Discover the latest trends, insights, and stories in technology,
         software, and innovation.
       </p>
