@@ -120,7 +120,6 @@ export const Comment = ({
               <p className="font-semibold text-sm truncate">
                 @{user.username} {user._id === post.userId._id && "(Author)"}
               </p>
-              {console.log(post.userId._id, user._id)}
               <span className="text-gray-400 text-xs">•</span>
               <p className="text-gray-500 text-xs whitespace-nowrap">
                 {moment(comment.createdAt).fromNow()}
