@@ -80,7 +80,6 @@ export const Search = () => {
             type="text"
             className="w-full border px-3 py-2 bg-gray-50 rounded-md mb-4 text-gray-600 dark:text-gray-800"
             placeholder="Search posts..."
-            defaultValue={inputSearch}
             value={inputSearch}
             onChange={(e) => setInputSearch(e.target.value)}
           />
