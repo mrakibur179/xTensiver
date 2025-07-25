@@ -18,7 +18,6 @@ import { OnlyAdminPrivateRoute } from "./components/OnlyAdminPrivateRoute";
 import UpdatePost from "./pages/UpdatePost";
 import { PostPage } from "./pages/PostPage";
 import { Search } from "./pages/Search";
-import MyComponent from "./components/MyComponent";
 
 const App = () => {
   return (
@@ -30,7 +29,6 @@ const App = () => {
       />
       <ScrollToTop />
       <Header />
-      <MyComponent />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
