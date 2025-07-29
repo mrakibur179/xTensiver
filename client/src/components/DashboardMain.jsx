@@ -230,7 +230,7 @@ export const DashboardMain = () => {
 const StatCard = ({ icon, label, value, sub, link }) => (
   <Link
     to={link}
-    className="p-4 rounded-lg shadow-sm dark:bg-slate-900 bg-slate-100 dark:border-gray-700 hover:shadow-md transition hover:border-blue-300 dark:hover:border-blue-700 group"
+    className="p-4 rounded-lg shadow-sm dark:bg-slate-900 bg-slate-100 dark:border-gray-400 hover:shadow-md transition hover:border-blue-300 dark:hover:border-blue-700 group"
   >
     <div className="flex items-center gap-3">
       <div className="p-2 bg-blue-50 dark:bg-gray-700 rounded-lg group-hover:bg-blue-100 dark:group-hover:bg-gray-600 transition">
@@ -246,7 +246,7 @@ const StatCard = ({ icon, label, value, sub, link }) => (
 );
 
 const Section = ({ title, children, link }) => (
-  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border dark:border-gray-700 h-fit">
+  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border-gray-400 dark:border-gray-600 h-fit">
     <div className="flex justify-between items-center mb-4">
       <h2 className="text-xl font-bold text-gray-800 dark:text-white">
         {title}

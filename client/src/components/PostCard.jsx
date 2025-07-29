@@ -15,7 +15,7 @@ export const PostCard = ({ post }) => {
             alt={post.title}
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-cover transition-transform duration-300 ease-out md:group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-900 ease-out md:group-hover:scale-102"
           />
         </div>
 

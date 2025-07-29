@@ -8,6 +8,7 @@ import { FaArrowRight, FaMailBulk } from "react-icons/fa";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
+  const [reviewPosts, setReviewPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
@@ -30,7 +31,23 @@ const Home = () => {
     };
 
     fetchPosts();
-  }, [posts]);
+  }, []);
+
+  useEffect(() => {
+    const fetchReviewPosts = async () => {
+      try {
+        const res = await fetch("/api/post/getposts?tag=review");
+        const data = await res.json();
+        if (res.ok) {
+          setReviewPosts(data.posts);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchReviewPosts();
+  }, []);
 
   const otherPosts = posts.slice(0, 4);
 
@@ -142,7 +159,7 @@ const Home = () => {
 
               {/* Posts Grid - Responsive columns */}
               {!loading && !error && (
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-2 md:gap-4">
                   {otherPosts.map((post) => (
                     <PostCard key={post._id} post={post} />
                   ))}
@@ -169,48 +186,53 @@ const Home = () => {
               </div>
 
               <div className="flex flex-col gap-6">
-                {posts.slice(0, 2).map((post) => (
-                  <div
+                {reviewPosts.slice(0, 2).map((post) => (
+                  <Link
+                    to={`/post/${post.slug}`}
+                    className="no-underline"
                     key={post._id}
-                    className="flex flex-col md:flex-row gap-5 bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-md"
                   >
-                    <div className="aspect-video overflow-hidden">
-                      <img
-                        src={post.poster}
-                        alt={post.title}
-                        className="max-h-[720px] max-w-[1080px] w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="p-4 flex flex-col justify-between">
-                      <div>
-                        <span className="uppercase text-xs font-semibold text-purple-600 dark:text-purple-400">
-                          Gadget
-                        </span>
-                        <h3 className="text-3xl font-bold mt-1 text-gray-900 dark:text-white">
-                          {post.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                          {post.description.substring(0, 120)}...
-                        </p>
+                    <div className="flex flex-col md:flex-row bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                      {/* Image section */}
+                      <div className="w-full md:w-[320px] aspect-[16/9] flex-shrink-0 overflow-hidden">
+                        <img
+                          src={post.poster}
+                          alt={post.title}
+                          className="w-full h-full object-cover object-center"
+                          loading="lazy"
+                        />
                       </div>
-                      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mt-3">
-                        <span>
-                          📅 {new Date(post.createdAt).toLocaleDateString()}
-                        </span>
+
+                      {/* Text section */}
+                      <div className="p-4 flex flex-col justify-between">
+                        <div>
+                          <span className="uppercase text-xs font-semibold text-purple-600 dark:text-purple-400">
+                            Tech Reviews
+                          </span>
+                          <h3 className="text-xl md:text-2xl font-bold mt-1 text-gray-900 dark:text-white">
+                            {post.title}
+                          </h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-3">
+                            {post.description.substring(0, 120)}...
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mt-3">
+                          <span>
+                            📅 {new Date(post.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
 
             {/* Advertisement / Side Banner */}
-            <div className="w-44 mx-auto max-w-[1080px] self-end rounded-lg overflow-hidden lg:w-[300px] flex-shrink-0">
-              <img
-                src="/ad1.jpg"
-                alt="Advertisement"
-                className="w-full h-full object-fill"
-              />
+            <div className="w-full place-content-center mx-auto max-w-[1080px] bg-gray-400 dark:bg-gray-400 rounded-lg overflow-hidden lg:w-[300px] flex-shrink-0">
+              <div className="text-center p-8 text-black dark:text-white">
+                Advertisement
+              </div>
             </div>
           </div>
         </section>

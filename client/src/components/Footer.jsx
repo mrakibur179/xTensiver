@@ -4,6 +4,7 @@ import {
   FaInstagram,
   FaYoutube,
   FaRss,
+  FaHeart,
 } from "react-icons/fa";
 
 const Footer = () => {
@@ -201,7 +202,13 @@ const Footer = () => {
 
       {/* Copyright */}
       <div className="max-w-7xl mx-auto mt-12 pt-4 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>© {new Date().getFullYear()} xTensiver. All rights reserved.</p>
+        <p className="flex items-center justify-center gap-2">
+          © {new Date().getFullYear()} Made with
+          <span className="text-red-500">
+            <FaHeart />
+          </span>
+          by xTensiver.
+        </p>
       </div>
     </footer>
   );

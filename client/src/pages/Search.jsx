@@ -12,7 +12,7 @@ export const Search = () => {
   const [showMore, setShowMore] = useState(false);
 
   const [startIndex, setStartIndex] = useState(0);
-  const limit = 2; // Number of posts to load per fetch
+  const limit = 6; // Number of posts to load per fetch
 
   const searchTerm = searchParams.get("searchTerm") || "";
   const sort = searchParams.get("sort") || "latest";
@@ -98,7 +98,7 @@ export const Search = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row mx-auto px-2 md:px-4 lg:px-6 py-8 gap-6 min-h-screen dark:bg-teal-950 pt-18 text-black transition-all ease-in-out duration-300 dark:text-white">
+    <div className="flex flex-col lg:flex-row mx-auto px-2 md:px-4 lg:px-6 py-8 gap-6 min-h-screen bg-slate-200 dark:bg-slate-800 pt-18 text-black transition-all ease-in-out duration-300 dark:text-white">
       {/* Sidebar */}
       <div className="w-full mx-auto md:w-2/3 lg:w-1/4">
         <h2 className="text-xl font-semibold mb-4">Search:</h2>
