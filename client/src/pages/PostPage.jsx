@@ -129,8 +129,8 @@ export const PostPage = () => {
           {post.tags.map((tag) => (
             <Link
               key={tag}
+              to={`/search?searchTerm=&tag=${tag}`}
               className="dark:text-blue-200 text-blue-800 hover:underline bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full"
-              to="#"
             >
               #{tag}
             </Link>

@@ -30,15 +30,15 @@ const Home = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [posts]);
 
   const otherPosts = posts.slice(0, 4);
 
   return (
     <main className="bg-slate-200 dark:bg-slate-800">
-      <div className="min-h-screen pt-16 text-gray-800 dark:text-gray-200 px-8 p-2 container mx-auto">
+      <div className="min-h-screen pt-16 text-gray-800 dark:text-gray-200 px-2 md:px-4 lg:px-6 p-2 container mx-auto">
         {/* Hero Section */}
-        <section className="relative rounded-2xl dark:from-gray-800 dark:via-gray-900 dark:to-gray-950 text-gray-900 px-0 md:px-8 lg:px-16 dark:text-white overflow-hidden">
+        <section className="relative rounded-md dark:from-gray-800 dark:via-gray-900 dark:to-gray-950 text-gray-900 px-0 md:px-8 lg:px-16 dark:text-white overflow-hidden">
           {/* <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-400/5 dark:to-purple-400/5"></div> */}
           <div className="relative z-10">
             <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
@@ -68,10 +68,10 @@ const Home = () => {
                     </Link>
                   ) : (
                     <Link
-                      to="/sign-in"
+                      to={currentUser ? "/#" : "/sign-in"}
                       className="px-8 py-3 min-w-fit bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform"
                     >
-                      Sign-In
+                      {currentUser ? "Welcome" : "Sign In"}
                     </Link>
                   )}
                   <Link
@@ -89,6 +89,7 @@ const Home = () => {
                   {/* <div className="absolute -inset-4 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl opacity-20 blur-lg"></div> */}
                   <img
                     src="/live_chat.png"
+                    loading="lazy"
                     alt="Tech Illustration"
                     className="relative w-full h-auto rounded-xl"
                   />
@@ -141,7 +142,7 @@ const Home = () => {
 
               {/* Posts Grid - Responsive columns */}
               {!loading && !error && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
                   {otherPosts.map((post) => (
                     <PostCard key={post._id} post={post} />
                   ))}
@@ -173,11 +174,13 @@ const Home = () => {
                     key={post._id}
                     className="flex flex-col md:flex-row gap-5 bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-md"
                   >
-                    <img
-                      src={post.poster}
-                      alt={post.title}
-                      className="w-full md:w-64 h-64 object-cover"
-                    />
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={post.poster}
+                        alt={post.title}
+                        className="max-h-[720px] max-w-[1080px] w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="p-4 flex flex-col justify-between">
                       <div>
                         <span className="uppercase text-xs font-semibold text-purple-600 dark:text-purple-400">
@@ -187,11 +190,10 @@ const Home = () => {
                           {post.title}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                          {post.content.substring(0, 120)}...
+                          {post.description.substring(0, 120)}...
                         </p>
                       </div>
                       <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mt-3">
-                        <span>🖊 {post.userName}</span>
                         <span>
                           📅 {new Date(post.createdAt).toLocaleDateString()}
                         </span>
@@ -203,14 +205,12 @@ const Home = () => {
             </div>
 
             {/* Advertisement / Side Banner */}
-            <div className="w-full lg:w-[300px] flex-shrink-0">
-              <div className="rounded-xl max-w-74 h-full mx-auto overflow-hidden shadow-lg">
-                <img
-                  src="/ad1.jpg"
-                  alt="Advertisement"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            <div className="w-44 mx-auto max-w-[1080px] self-end rounded-lg overflow-hidden lg:w-[300px] flex-shrink-0">
+              <img
+                src="/ad1.jpg"
+                alt="Advertisement"
+                className="w-full h-full object-fill"
+              />
             </div>
           </div>
         </section>

@@ -323,7 +323,7 @@ const Header = () => {
                             <DropdownItem
                               icon={HiViewGrid}
                               onClick={() => {
-                                navigate("/dashboard?tab=main");
+                                navigate("/dashboard?tab=profile");
                                 setMobileMenuOpen(false);
                               }}
                             >
