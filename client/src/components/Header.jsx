@@ -295,6 +295,7 @@ const Header = () => {
                       <>
                         <div className="flex justify-start w-fit px-6 pl-3 py-2 rounded-full gap-4 items-center">
                           <img
+                            alt={currentUser.username}
                             src={currentUser.profilePicture}
                             className="rounded-full w-8 h-8 object-cover"
                           />

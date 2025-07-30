@@ -163,7 +163,7 @@ export const DashboardMain = () => {
             >
               <div className="flex items-center gap-3">
                 <img
-                  src={post.poster || "/no-image.png"}
+                  src={post.poster}
                   alt="Post"
                   className="w-14 h-10 rounded-md object-cover"
                 />
