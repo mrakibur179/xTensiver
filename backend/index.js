@@ -6,33 +6,35 @@ import authRoutes from "./routes/auth.route.js";
 import postRoutes from "./routes/post.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
-// import path from "path";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// const __dirname = path.resolve();
+// Proper __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// Middleware
 app.use(express.json());
 app.use(cookieParser());
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  connectDB();
-  console.log("App is listening");
-});
-
+// API Routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
 
-// app.use(express.static(path.join(__dirname, "/client/dist")));
+// Static files - ensure this matches your build output directory
+app.use(express.static(path.join(__dirname, "client", "dist")));
 
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
-// });
+// SPA Fallback Route - IMPORTANT: Must be after API routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "/client/dist/index.html"));
+});
 
+// Error Handler
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
@@ -41,4 +43,10 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  connectDB();
+  console.log(`Server running on port ${PORT}`);
 });
