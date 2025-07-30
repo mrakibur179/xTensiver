@@ -42,15 +42,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
 
-// Serve static files only in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "client", "dist")));
-
-  // SPA Fallback Route
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
-  });
-}
+app.get("*", (req, res) => {
+  const filePath = path.join(__dirname, "client", "dist", "index.html");
+  console.log("Serving index.html from:", filePath);
+  res.sendFile(filePath);
+});
 
 // Error Handler
 app.use((err, req, res, next) => {
