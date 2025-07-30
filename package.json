@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon backend/index.js",
     "start": "node backend/index.js",
-    "build": "npm install && npm install --prefix client && npm run build --prefix client"
+    "build": "npm install && npm install --prefix client && npm run build --prefix client && rm -rf backend/client && mkdir -p backend/client && cp -r client/dist backend/client/"
   },
   "repository": {
     "type": "git",
