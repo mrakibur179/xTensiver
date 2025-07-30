@@ -57,6 +57,7 @@ const SearchModal = ({ setIsModalOpen, searchTerm, setSearchTerm }) => {
         </div>
         <form onSubmit={handleSubmit}>
           <input
+            id="search_box"
             type="text"
             placeholder="Search blogs or articles…"
             className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"

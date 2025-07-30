@@ -4,7 +4,7 @@ import { Spinner } from "flowbite-react";
 import { CallToAction } from "../components/CallToAction";
 import { PostCard } from "../components/PostCard";
 import { useSelector } from "react-redux";
-import { FaArrowRight, FaMailBulk } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);

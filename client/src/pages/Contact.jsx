@@ -22,7 +22,7 @@ const Contact = () => {
           Have a question, suggestion, or just want to say hi? Fill out the form
           below and we'll get back to you soon!
         </p>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" id="contact_form">
           <div>
             <label className="block mb-1 font-semibold">Name</label>
             <input
