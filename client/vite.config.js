@@ -2,20 +2,18 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import flowbiteReact from "flowbite-react/plugin/vite";
-import { fileURLToPath } from "url";
-import { dirname, resolve } from "path";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), flowbiteReact()],
-  build: {
-    outDir: resolve(__dirname, "../client/dist"),
-  },
-  resolve: {
-    alias: {
-      "@": resolve(__dirname, "src"),
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        secure: false,
+      },
     },
+    host: true, // or '0.0.0.0'
+    allowedHosts: ["488b4d641d44.ngrok-free.app"],
   },
+  plugins: [react(), tailwindcss(), flowbiteReact()],
 });
