@@ -3,12 +3,16 @@ import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { app } from "../firebase";
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "../redux/user/userSlice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const OAuth = () => {
   const auth = getAuth(app);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const location = useLocation();
+
   const handleGoogleClick = async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
@@ -30,7 +34,10 @@ const OAuth = () => {
 
       if (res.ok) {
         dispatch(signInSuccess(data));
-        navigate("/");
+        toast.success("Login Successfully!");
+        const redirectPath =
+          new URLSearchParams(location.search).get("redirect") || "/";
+        navigate(redirectPath);
       }
     } catch (error) {
       console.log(error);

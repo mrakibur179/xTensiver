@@ -1,5 +1,62 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@plugin 'tailwind-scrollbar';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 @plugin "flowbite-react/plugin/tailwindcss";
 @source "../.flowbite-react/class-list.json";
 
-@custom-variant dark (&:where(.dark, .dark *));
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1a202c;
+  --hover-color: #f7fafc;
+  --tag-bg-color: #e2e8f0;
+  --tag-text-color: #1a202c;
+}
+
+.dark {
+  --bg-color: #1a202c;
+  --text-color: #f7fafc;
+  --hover-color: #2d3748;
+  --tag-bg-color: #4a5568;
+  --tag-text-color: #f7fafc;
+}
+
+.ql-editor img {
+  display: block;
+  margin-inline: auto !important;
+  width: 520px;
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+.ql-editor iframe {
+  width: 100%;
+  max-width: 420px !important;
+  height: 560px !important;
+  margin: 2rem auto;
+  display: block;
+  box-shadow: none !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ql-editor pre {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  font-family: "Fira Code", monospace;
+}
+
+.ql-editor {
+  height: 100% !important;
+  padding: 0px !important;
+}
+
+.ql-editor ol {
+  padding-left: 0 !important;
+}

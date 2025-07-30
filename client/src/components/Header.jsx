@@ -1,13 +1,27 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { FaMoon, FaSearch, FaSun } from "react-icons/fa";
+import {
+  Link,
+  Navigate,
+  NavLink,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { MdClose, MdOutlineMenu } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import Searchbox from "./Searchbox";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProfileDropdown from "../ui/ProfileDropdown";
 import SearchModal from "./SearchModal";
 import ThemeTogglerButton from "../ui/ThemeTogglerButton";
+import {
+  Dropdown,
+  DropdownDivider,
+  DropdownHeader,
+  DropdownItem,
+} from "flowbite-react";
+import { HiClipboardList, HiLogout, HiViewGrid } from "react-icons/hi";
+import { toast } from "react-toastify";
+import { signOutSuccess } from "../redux/user/userSlice";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -15,14 +29,28 @@ const Header = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const menuRef = useRef(null);
   const dropdownRef = useRef(null);
 
+  const location = useLocation();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTermFromUrl);
+    }
+  }, [location.search]);
+
   const navLinks = [
     { link: "/", title: "Home" },
-    { link: "/blogs", title: "Blogs" },
+    { link: "/search", title: "Posts" },
     { link: "/about", title: "About" },
     { link: "/contact", title: "Contact" },
   ];
@@ -109,9 +137,29 @@ const Header = () => {
     },
   };
 
+  const handleSignOut = async () => {
+    setMobileMenuOpen(false);
+
+    try {
+      const res = await fetch(`/api/user/signout`, {
+        method: "POST",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOutSuccess());
+        toast.success("Signed out successfully!");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <header
-      className={`fixed top-0 backdrop-blur-sm left-0 dark:bg-gray-900/60 shadow-2xl right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 backdrop-blur-xs left-0 bg-white/60 dark:bg-gray-950/40 shadow-2xl right-0 z-50 transition-all duration-300 ${
         scrolled ? "shadow-sm" : "shadow-xs"
       }`}
     >
@@ -171,7 +219,9 @@ const Header = () => {
                 />
               ) : (
                 <Link
-                  to="/sign-up"
+                  to={`/sign-in?redirect=${encodeURIComponent(
+                    location.pathname + location.search
+                  )}`}
                   className="border text-sm px-4 py-1.5 rounded-full transition border-gray-400 text-black dark:text-white hover:bg-gray-50/50 dark:hover:bg-gray-800"
                 >
                   Sign-In
@@ -216,7 +266,7 @@ const Header = () => {
                 animate="visible"
                 exit="hidden"
                 variants={mobileMenuVariants}
-                className="fixed md:hidden inset-0 left-16 shadow-lg pt-20 min-h-screen z-40 bg-purple-100 dark:bg-gray-950 backdrop-blur-lg p-6 overflow-y-auto"
+                className="fixed md:hidden inset-0 left-20 shadow-lg pt-20 min-h-screen z-40 bg-slate-100/98 dark:bg-gray-950/98 backdrop-blur-[6px] p-6 overflow-y-auto"
               >
                 {/* Nav links */}
                 <nav className="flex flex-col space-y-4 mb-6">
@@ -234,27 +284,76 @@ const Header = () => {
                       {item.title}
                     </NavLink>
                   ))}
+
                   <div className="self-center">
                     <ThemeTogglerButton />
+                  </div>
+
+                  {/* Auth */}
+                  <div className="mt-4">
+                    {currentUser ? (
+                      <>
+                        <div className="flex justify-start w-fit px-6 pl-3 py-2 rounded-full gap-4 items-center">
+                          <img
+                            src={currentUser.profilePicture}
+                            className="rounded-full w-8 h-8 object-cover"
+                          />
+
+                          <Dropdown
+                            label={currentUser.username}
+                            inline
+                            placement="bottom"
+                          >
+                            <DropdownHeader>
+                              <span className="block cursor-pointer truncate text-sm font-medium">
+                                {currentUser.email}
+                              </span>
+                            </DropdownHeader>
+                            {currentUser.isAdmin && (
+                              <DropdownItem
+                                icon={HiClipboardList}
+                                onClick={() => {
+                                  navigate("/create-post");
+                                  setMobileMenuOpen(false);
+                                }}
+                              >
+                                Create Post
+                              </DropdownItem>
+                            )}
+                            <DropdownItem
+                              icon={HiViewGrid}
+                              onClick={() => {
+                                navigate("/dashboard?tab=profile");
+                                setMobileMenuOpen(false);
+                              }}
+                            >
+                              Dashboard
+                            </DropdownItem>
+                            <DropdownDivider />
+                            <DropdownItem
+                              icon={HiLogout}
+                              onClick={handleSignOut}
+                            >
+                              Sign out
+                            </DropdownItem>
+                          </Dropdown>
+                        </div>
+                      </>
+                    ) : (
+                      <Link
+                        to={`/sign-in?redirect=${encodeURIComponent(
+                          location.pathname + location.search
+                        )}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block w-full text-center border px-4 py-2 rounded-full bg-blue-500 font-semibold border-teal-500 dark:border-teal-500 text-white dark:text-gray-100 hover:bg-blue-600 dark:hover:bg-blue-700 transition"
+                      >
+                        Sign-In
+                      </Link>
+                    )}
                   </div>
                 </nav>
 
                 {/* Theme Toggle */}
-
-                {/* Auth */}
-                <div className="mt-4">
-                  {currentUser ? (
-                    ""
-                  ) : (
-                    <Link
-                      to="/sign-up"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block w-full text-center border px-4 py-2 rounded-full bg-blue-500 font-semibold border-teal-500 dark:border-teal-500 text-white dark:text-gray-100 hover:bg-blue-600 dark:hover:bg-blue-700 transition"
-                    >
-                      Sign-In
-                    </Link>
-                  )}
-                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -262,7 +361,13 @@ const Header = () => {
       </div>
 
       {/* Modal for search */}
-      {isModalOpen && <SearchModal setIsModalOpen={setIsModalOpen} />}
+      {isModalOpen && (
+        <SearchModal
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          setIsModalOpen={setIsModalOpen}
+        />
+      )}
     </header>
   );
 };

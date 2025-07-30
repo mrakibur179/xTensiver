@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import illustration from "../assets/sign-up_page.jpg";
-import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 import { Spinner } from "flowbite-react";
 import OAuth from "../components/OAuth";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +29,10 @@ const Signup = () => {
     setUserNameError("");
 
     if (!email || !userName || !password || !checkbox) {
-      return setError("Please fill up all the fields.");
+      const errorMsg = "Please fill up all the fields.";
+      setError(errorMsg);
+      toast.error(errorMsg);
+      return;
     }
 
     const formData = {
@@ -54,17 +57,24 @@ const Signup = () => {
 
         if (msg.includes("E11000")) {
           if (msg.includes("email")) {
-            setEmailError("Email already exists.");
+            const errorMsg = "Email already exists.";
+            setEmailError(errorMsg);
+            toast.error(errorMsg);
           } else if (msg.includes("username")) {
-            setUserNameError("Username already exists.");
+            const errorMsg = "Username already exists.";
+            setUserNameError(errorMsg);
+            toast.error(errorMsg);
           } else {
             setError(msg);
+            toast.error(msg);
           }
+          return;
         } else {
           setError(msg);
+          toast.error(msg);
         }
       } else {
-        alert("✅ Signup successful");
+        toast.success("Signup successful!");
         setEmail("");
         setUserName("");
         setPassword("");
@@ -72,34 +82,34 @@ const Signup = () => {
         navigate("/sign-in");
       }
     } catch (err) {
-      alert("🚫 Network error: " + err.message);
+      toast.error("🚫 Network error: " + err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 max-w-screen grid place-content-center pt-15 dark:bg-teal-950  text-black transition-all ease-in-out duration-300 dark:text-white">
-      <div className="grid justify-center h-full gap-8 md:gap-16 grid-cols-1 lg:grid-cols-2 container p-4">
-        <img
-          className="rounded-[8px] order-2 lg:order-1 mx-auto self-center max-w-full lg:max-w-full"
-          src={illustration}
-          alt="illustration"
-        />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4 pt-15">
+      <div className="w-full max-w-md">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+              Create Account
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Join our community and start something awesome.
+            </p>
+          </div>
 
-        <div className="h-full max-w-lg justify-center mx-auto bg-gray-200 dark:bg-gray-950 p-4 px-8 lg:px-16 items-center order-1 lg:order-2 shadow-xl rounded-2xl">
-          <h1 className="text-center text-4xl mt-4 mb-2">Sign Up</h1>
-          <h3 className="text-gray-500 mb-8 dark:text-gray-400 text-center">
-            Join our community and start something awesome.
-          </h3>
-          <form className="w-full pb-8 flex flex-col" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
-            <div className="mb-5">
+            <div>
               <label
                 htmlFor="email"
-                className="flex mb-1 items-center justify-between text-sm font-medium text-gray-900 dark:text-gray-100"
+                className="flex mb-1 items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Your email
+                Email
                 {emailError && (
                   <span className="text-red-500 dark:text-red-400 text-sm font-normal">
                     {emailError}
@@ -111,24 +121,24 @@ const Signup = () => {
                 onChange={(e) => setEmail(e.target.value.trim())}
                 type="email"
                 id="email"
-                className={`w-full p-2.5 text-sm rounded-lg border ${
+                className={`w-full px-4 py-3 rounded-lg border ${
                   emailError
                     ? "border-red-500 text-red-600 dark:text-red-400 focus:ring-red-500 focus:border-red-500"
                     : "border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                } bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400`}
-                placeholder="enter your email address"
+                } bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:border-transparent transition`}
+                placeholder="Enter your email address"
                 autoComplete="email"
                 required
               />
             </div>
 
             {/* Username Field */}
-            <div className="mb-5">
+            <div>
               <label
                 htmlFor="user-name"
-                className="flex mb-1 items-center justify-between text-sm font-medium text-gray-900 dark:text-gray-100"
+                className="flex mb-1 items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Your username
+                Username
                 {userNameError && (
                   <span className="text-red-500 dark:text-red-400 text-sm font-normal">
                     {userNameError}
@@ -140,24 +150,24 @@ const Signup = () => {
                 onChange={(e) => setUserName(e.target.value.trim())}
                 type="text"
                 id="user-name"
-                className={`w-full p-2.5 text-sm rounded-lg border ${
+                className={`w-full px-4 py-3 rounded-lg border ${
                   userNameError
                     ? "border-red-500 text-red-600 dark:text-red-400 focus:ring-red-500 focus:border-red-500"
                     : "border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                } bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 pr-10`}
-                placeholder="enter your unique username"
+                } bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:border-transparent transition`}
+                placeholder="Enter your unique username"
                 autoComplete="off"
                 required
               />
             </div>
 
             {/* Password Field */}
-            <div className="mb-5">
+            <div>
               <label
                 htmlFor="password"
-                className="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-100"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
               >
-                Your password
+                Password
               </label>
               <div className="relative">
                 <input
@@ -165,15 +175,15 @@ const Signup = () => {
                   onChange={(e) => setPassword(e.target.value.trim())}
                   type={showPassword ? "text" : "password"}
                   id="password"
-                  placeholder="enter your password"
-                  className="w-full p-2.5 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 pr-10"
+                  placeholder="Enter your password"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition pr-12"
                   autoComplete="new-password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute cursor-pointer right-2.5 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  className="absolute cursor-pointer right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <FaEye /> : <FaEyeSlash />}
@@ -182,7 +192,7 @@ const Signup = () => {
             </div>
 
             {/* Terms Checkbox */}
-            <div className="flex items-start mb-5">
+            <div className="flex items-start">
               <div className="flex items-center h-5">
                 <input
                   id="terms"
@@ -195,7 +205,7 @@ const Signup = () => {
               </div>
               <label
                 htmlFor="terms"
-                className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer"
+                className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
               >
                 I agree with the{" "}
                 <a
@@ -211,32 +221,32 @@ const Signup = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full cursor-pointer py-3 px-5 rounded-full text-sm font-medium text-white ${
+              className={`w-full py-3 px-4 cursor-pointer rounded-lg font-medium text-white ${
                 isLoading
                   ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
+                  : "bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition"
               }`}
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
                   <Spinner size="sm" />
-                  <span className="pl-2">Loading...</span>
+                  <span className="ml-2">Creating account...</span>
                 </div>
               ) : (
-                "Create New Account"
+                "Sign Up"
               )}
             </button>
 
-            {/* Login Link */}
-            <p className="text-center mt-4 text-sm text-gray-600 dark:text-gray-400">
-              Have an account?{" "}
+            {/* Sign In Link */}
+            <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+              Already have an account?{" "}
               <Link
                 to="/sign-in"
-                className="text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+                className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
               >
                 Sign In
               </Link>
-            </p>
+            </div>
 
             {/* Divider */}
             <div className="relative my-4">
@@ -244,7 +254,7 @@ const Signup = () => {
                 <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
               </div>
               <div className="relative flex justify-center">
-                <span className="px-2 bg-white dark:bg-gray-800 text-sm text-gray-500 dark:text-gray-400">
+                <span className="px-2 bg-gray-200 dark:bg-gray-600 text-sm text-gray-800 dark:text-gray-100">
                   or
                 </span>
               </div>
@@ -258,4 +268,5 @@ const Signup = () => {
     </div>
   );
 };
+
 export default Signup;

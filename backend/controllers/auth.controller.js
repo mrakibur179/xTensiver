@@ -24,7 +24,7 @@ export const signup = async (req, res, next) => {
 
   try {
     await newUser.save();
-    res.json("Signup Successfull!!!");
+    res.json(200, "Signup Successfull!!!");
   } catch (error) {
     next(error);
   }
@@ -48,7 +48,14 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(400, "Password is incorrect."));
     }
 
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    const token = jwt.sign(
+      {
+        id: validUser._id,
+        isAdmin: validUser.isAdmin,
+        isSuperAdmin: validUser.isSuperAdmin,
+      },
+      process.env.JWT_SECRET
+    );
 
     const { password: pass, ...rest } = validUser._doc;
 
@@ -56,6 +63,9 @@ export const signin = async (req, res, next) => {
       .status(200)
       .cookie("access_token", token, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // ✅ 7 days in milliseconds
       })
       .json(rest);
   } catch (error) {
@@ -70,12 +80,22 @@ export const google = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      const token = jwt.sign(
+        {
+          id: user._id,
+          isAdmin: user.isAdmin,
+          isSuperAdmin: user.isSuperAdmin,
+        },
+        process.env.JWT_SECRET
+      );
       const { password, ...rest } = user._doc;
       res
         .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // ✅ 7 days in milliseconds
         })
         .json(rest);
     } else {
@@ -95,12 +115,22 @@ export const google = async (req, res, next) => {
 
       await newUser.save();
 
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const token = jwt.sign(
+        {
+          id: newUser._id,
+          isAdmin: newUser.isAdmin,
+          isSuperAdmin: newUser.isSuperAdmin,
+        },
+        process.env.JWT_SECRET
+      );
       const { password, ...rest } = newUser._doc;
       res
         .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // ✅ 7 days in milliseconds
         })
         .json(rest);
     }

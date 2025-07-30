@@ -1,6 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { signOutSuccess } from "../redux/user/userSlice";
+import { toast } from "react-toastify";
 
 const ProfileDropdown = ({
   currentUser,
@@ -13,6 +16,28 @@ const ProfileDropdown = ({
     visible: { y: 0, opacity: 1 },
   };
 
+  const dispatch = useDispatch();
+
+  const handleSignOut = async (e) => {
+    e.stopPropagation();
+    setDropdownOpen(false);
+    try {
+      const res = await fetch(`/api/user/signout`, {
+        method: "POST",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOutSuccess());
+        toast.success("Signed out successfully!");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -21,9 +46,13 @@ const ProfileDropdown = ({
       >
         {currentUser.profilePicture ? (
           <img
-            src={currentUser.profilePicture}
+            src={currentUser.profilePicture || "/default-avatar.png"}
             alt="User profile"
             className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.onError = null;
+              e.target.src = "/default-avatar.png";
+            }}
           />
         ) : (
           <FaUserCircle className="w-full h-full text-gray-400" />
@@ -39,7 +68,7 @@ const ProfileDropdown = ({
             exit="hidden"
             variants={dropdownVariants}
             transition={{ duration: 0.2 }}
-            onClick={(e) => e.stopPropagation()} // Prevents dropdown from closing when clicking inside
+            style={{ pointerEvents: "auto" }}
             className="absolute right-0 mt-2 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700"
           >
             <div className="px-4 min-w-max py-2 border-b border-gray-100 dark:border-gray-700">
@@ -50,24 +79,38 @@ const ProfileDropdown = ({
                 {currentUser.email}
               </p>
             </div>
+
+            {currentUser.isAdmin && (
+              <Link
+                to="/create-post"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDropdownOpen(false);
+                }}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Create Post
+              </Link>
+            )}
+
             <Link
-              to="/dashboard"
+              to={
+                currentUser.isSuperAdmin
+                  ? "/dashboard?tab=main"
+                  : "/dashboard?tab=profile"
+              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setDropdownOpen(false);
+              }}
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-              onClick={() => setDropdownOpen(false)}
             >
               Dashboard
             </Link>
+
             <Link
-              to="/settings"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-              onClick={() => setDropdownOpen(false)}
-            >
-              Settings
-            </Link>
-            <Link
-              to="/logout"
+              onClick={handleSignOut}
               className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
-              onClick={() => setDropdownOpen(false)}
             >
               Sign out
             </Link>
