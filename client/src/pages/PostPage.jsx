@@ -5,16 +5,66 @@ import { CallToAction } from "../components/CallToAction";
 import { CommentSection } from "../components/CommentSection";
 import { useSelector } from "react-redux";
 import { FaRegEdit } from "react-icons/fa";
+import MarkdownIt from "markdown-it";
+import "./PostPage.css";
 
 export const PostPage = () => {
   const { postSlug } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [post, setPost] = useState(null);
-
   const [recentArticles, setRecentArticles] = useState([]);
 
   const { currentUser } = useSelector((state) => state.user);
+  const mdParser = new MarkdownIt({
+    html: true,
+    linkify: true,
+    typographer: true,
+  });
+
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains("dark");
+    setIsDarkMode(isDark);
+  }, []);
+
+  // Function to add copy buttons to code blocks
+  const addCopyButtonsToCodeBlocks = () => {
+    document.querySelectorAll("pre").forEach((pre) => {
+      if (pre.parentElement.classList.contains("code-block-wrapper")) {
+        return;
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "code-block-wrapper";
+
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "code-copy-btn";
+      copyBtn.textContent = "Copy";
+
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+      wrapper.appendChild(copyBtn);
+
+      copyBtn.addEventListener("click", () => {
+        const code = pre.querySelector("code")?.textContent || "";
+        navigator.clipboard
+          .writeText(code)
+          .then(() => {
+            copyBtn.textContent = "Copied!";
+            copyBtn.classList.add("copied");
+            setTimeout(() => {
+              copyBtn.textContent = "Copy";
+              copyBtn.classList.remove("copied");
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Failed to copy text: ", err);
+          });
+      });
+    });
+  };
 
   // Save scroll position before reload
   useEffect(() => {
@@ -38,6 +88,18 @@ export const PostPage = () => {
     }
   }, [post, postSlug]);
 
+  // Add copy buttons when post content is loaded
+  useEffect(() => {
+    if (post) {
+      const timer = setTimeout(() => {
+        addCopyButtonsToCodeBlocks();
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [post]);
+
+  // Fetch post data
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -91,7 +153,7 @@ export const PostPage = () => {
 
   return (
     <div className="px-4 mx-auto max-w-7xl flex items-start flex-col lg:flex-row gap-4 justify-center py-20 text-gray-800 dark:text-gray-200 overflow-x-hidden">
-      <div className="min-w-2/3  mx-auto">
+      <div className="min-w-2/3 mx-auto">
         <span className="py-4">
           Home {`>`} posts {`>`} {postSlug}
         </span>
@@ -154,8 +216,19 @@ export const PostPage = () => {
 
         <br />
 
-        <div className="ql-editor prose prose-img:mx-auto prose-li:marker:text-indigo-600 prose-ol:list-decimal prose-ul:list-disc max-w-none dark:prose-invert">
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        {/* Markdown Content */}
+        <div
+          className={`markdown-body ${
+            isDarkMode ? "markdown-body-dark" : ""
+          } max-w-full overflow-x-auto`}
+          style={{ overflowX: "hidden" }}
+        >
+          <div
+            className="dark:text-gray-300"
+            dangerouslySetInnerHTML={{
+              __html: mdParser.render(post.content || ""),
+            }}
+          />
         </div>
 
         <div className="max-w-full">

@@ -189,7 +189,7 @@ export const DashComments = () => {
           )}
         </div>
       ) : (
-        <h1 className="text-left text-2xl p-4">No Users Yet!</h1>
+        <h1 className="text-left text-2xl p-4">No Comments Yet!</h1>
       )}
 
       <Modal
