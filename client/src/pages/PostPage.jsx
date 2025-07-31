@@ -153,7 +153,7 @@ export const PostPage = () => {
 
   return (
     <div className="px-4 mx-auto max-w-7xl flex items-start flex-col lg:flex-row gap-4 justify-center py-20 text-gray-800 dark:text-gray-200 overflow-x-hidden">
-      <div className="min-w-2/3 mx-auto">
+      <div className="min-w-2/3 mx-auto max-w-full">
         <span className="py-4">
           Home {`>`} posts {`>`} {postSlug}
         </span>
@@ -218,10 +218,12 @@ export const PostPage = () => {
 
         {/* Markdown Content */}
         <div
-          className={`markdown-body ${
-            isDarkMode ? "markdown-body-dark" : ""
-          } max-w-full overflow-x-auto`}
-          style={{ overflowX: "hidden" }}
+          className={`markdown-body ${isDarkMode ? "markdown-body-dark" : ""}`}
+          style={{
+            maxWidth: "100%",
+            overflowX: "hidden",
+            wordWrap: "break-word",
+          }}
         >
           <div
             className="dark:text-gray-300"

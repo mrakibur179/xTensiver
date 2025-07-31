@@ -189,7 +189,7 @@ const UpdatePost = () => {
   };
 
   return (
-    <div className="max-w-4xl pt-24 mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-screen transition-all">
+    <div className="max-w-7xl pt-24 mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-screen transition-all">
       <Link
         to={-1}
         className="bg-red-500 text-white cursor-pointer p-2 px-4 rounded-md"

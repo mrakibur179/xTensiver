@@ -1,4 +1,4 @@
-/* Markdown Base Styles */
+/* ===== Base Styles ===== */
 .markdown-body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
     sans-serif;
@@ -13,13 +13,14 @@
   background-color: transparent;
 }
 
-/* Paragraphs and Line Breaks */
+/* ===== Paragraphs ===== */
 .markdown-body p {
   margin-bottom: 16px;
   line-height: 1.6;
+  /* font-size: 14px; */
 }
 
-/* Headings */
+/* ===== Headings ===== */
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3,
@@ -30,21 +31,22 @@
   margin-bottom: 16px;
   font-weight: 600;
   line-height: 1.25;
+  border: none;
+  padding: 0;
+  text-decoration: none;
 }
 
 .markdown-body h1 {
   font-size: 2em;
-  border-bottom: 1px solid #eaecef;
   padding-bottom: 0.3em;
 }
 
 .markdown-body h2 {
   font-size: 1.5em;
-  border-bottom: 1px solid #eaecef;
   padding-bottom: 0.3em;
 }
 
-/* Code Blocks */
+/* ===== Code Blocks ===== */
 .markdown-body pre {
   background-color: #f6f8fa;
   border-radius: 6px;
@@ -59,8 +61,7 @@
 }
 
 .markdown-body code {
-  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
-    Liberation Mono, monospace;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
   font-size: 85%;
   background-color: rgba(175, 184, 193, 0.2);
   border-radius: 3px;
@@ -71,33 +72,21 @@
   background-color: rgba(110, 118, 129, 0.4);
 }
 
-/* Tables */
+/* ===== Tables ===== */
 .markdown-body table {
   border-collapse: collapse;
-  border-spacing: 0;
-  display: table;
   width: 100%;
-  max-width: 100%;
   margin-bottom: 16px;
-  overflow: auto;
   border: 1px solid #dfe2e5;
 }
 
 .markdown-body table th,
 .markdown-body table td {
   padding: 6px 13px;
+  overflow-x: auto;
   border: 1px solid #9ea4aa;
 }
 
-.markdown-body table th {
-  font-weight: 600;
-}
-
-.markdown-body table tr {
-  border-top: 1px solid #a7aeb6;
-}
-
-/* Dark Mode Tables */
 .markdown-body-dark table {
   border-color: #30363d;
   background-color: black;
@@ -121,7 +110,93 @@
   background-color: #161b22;
 }
 
-/* Code Block with Copy Button */
+/* ===== Lists ===== */
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2em;
+  margin-bottom: 16px;
+}
+
+.markdown-body ul {
+  list-style-type: disc;
+}
+
+.markdown-body ol {
+  list-style-type: decimal;
+}
+
+.markdown-body ol ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body li {
+  display: list-item;
+  margin-bottom: 0.25em;
+}
+
+/* ===== Links ===== */
+.markdown-body a {
+  color: #0366d6;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.markdown-body a:hover {
+  border-bottom-color: currentColor;
+}
+
+.markdown-body-dark a {
+  color: #58a6ff;
+}
+
+/* ===== Blockquotes ===== */
+.markdown-body blockquote {
+  padding: 0 1rem;
+  color: #858890;
+  border-left: 0.25em solid #dfe2e5;
+  margin: 0 0 16px 0;
+}
+
+.markdown-body-dark blockquote {
+  color: #8b949e;
+  border-left-color: #30363d;
+}
+
+/* ===== Horizontal Rule ===== */
+.markdown-body hr {
+  height: 1px;
+  width: 12rem;
+  margin: 24px 0;
+  background-color: #e1e4e8;
+  border: none;
+}
+
+.markdown-body-dark hr {
+  background-color: #21262d;
+}
+
+/* ===== Images ===== */
+.markdown-body img {
+  max-width: min(100%, 100vw - 2rem);
+  max-height: 48rem;
+}
+
+/* ===== Embedded Videos ===== */
+.markdown-body iframe {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 1rem 0;
+  border: none;
+}
+
+/* ===== Code Block Copy Button (Optional) ===== */
 .code-block-wrapper {
   position: relative;
   margin-bottom: 16px;
@@ -157,80 +232,15 @@
   border-color: #2a9141;
 }
 
-/* Lists */
-.markdown-body ul,
-.markdown-body ol {
-  padding-left: 2em;
-  margin-bottom: 16px;
-}
-
-.markdown-body li {
-  margin-bottom: 0.25em;
-}
-
-/* Links */
-.markdown-body a {
-  color: #0366d6;
-  text-decoration: none;
-}
-
-.markdown-body a:hover {
+/* ===== Underline Styling Fixes ===== */
+.markdown-body u,
+.markdown-body ins {
   text-decoration: underline;
+  text-decoration-skip-ink: auto;
+  text-underline-offset: 0.2em;
 }
 
-.markdown-body-dark a {
-  color: #58a6ff;
-}
-
-/* Blockquotes */
-.markdown-body blockquote {
-  padding: 0 1em;
-  color: #57606a;
-  border-left: 0.25em solid #dfe2e5;
-  margin: 0 0 16px 0;
-}
-
-.markdown-body-dark blockquote {
-  color: #8b949e;
-  border-left-color: #30363d;
-}
-
-/* Horizontal Rule */
-.markdown-body hr {
-  height: 0.25em;
-  padding: 0;
-  margin: 24px 0;
-  background-color: #e1e4e8;
-  border: 0;
-}
-
-.markdown-body-dark hr {
-  background-color: #21262d;
-}
-
-.markdown-body {
-  word-break: break-word;
-}
-
-.markdown-body ul {
-  list-style-type: disc;
-}
-
-.markdown-body ol {
-  list-style-type: decimal;
-  padding-left: 1rem;
-  margin-bottom: 16px;
-}
-
-.markdown-body ol ol {
-  list-style-type: lower-alpha;
-}
-
-.markdown-body ol ol ol {
-  list-style-type: lower-roman;
-}
-
-.markdown-body li {
-  display: list-item;
-  margin-bottom: 0.25em;
+.markdown-body-dark u,
+.markdown-body-dark ins {
+  text-decoration-color: rgba(255, 255, 255, 0.7);
 }

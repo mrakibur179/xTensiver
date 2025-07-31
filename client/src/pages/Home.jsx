@@ -5,6 +5,7 @@ import { CallToAction } from "../components/CallToAction";
 import { PostCard } from "../components/PostCard";
 import { useSelector } from "react-redux";
 import { FaArrowRight } from "react-icons/fa";
+import { PostCardSkeleton } from "../components/PostCardSkeleton";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -136,8 +137,10 @@ const Home = () => {
 
               {/* Loading State */}
               {loading && (
-                <div className="flex justify-center mt-10">
-                  <Spinner size="xl" />
+                <div className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-2 md:gap-4">
+                  {[...Array(4)].map((_, index) => (
+                    <PostCardSkeleton key={index} />
+                  ))}
                 </div>
               )}
 
