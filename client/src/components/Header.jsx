@@ -22,6 +22,7 @@ import {
 import { HiClipboardList, HiLogout, HiViewGrid } from "react-icons/hi";
 import { toast } from "react-toastify";
 import { signOutSuccess } from "../redux/user/userSlice";
+import { BsArrow90DegDown, BsArrowBarDown } from "react-icons/bs";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -38,6 +39,7 @@ const Header = () => {
 
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
+  const [tags, setTags] = useState([]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -157,6 +159,19 @@ const Header = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const res = await fetch("/api/post/tags");
+        const data = await res.json();
+        if (Array.isArray(data)) setTags(data);
+      } catch (error) {
+        console.error("Failed to fetch tags:", error);
+      }
+    };
+    fetchTags();
+  }, []);
+
   return (
     <header
       className={`fixed top-0 backdrop-blur-xs left-0 bg-white/60 dark:bg-gray-950/40 shadow-2xl right-0 z-50 transition-all duration-300 ${
@@ -266,7 +281,7 @@ const Header = () => {
                 animate="visible"
                 exit="hidden"
                 variants={mobileMenuVariants}
-                className="fixed md:hidden inset-0 left-20 shadow-lg pt-20 min-h-screen z-40 bg-slate-100/98 dark:bg-gray-950/98 backdrop-blur-[6px] p-6 overflow-y-auto"
+                className="fixed md:hidden inset-0 left-10 shadow-lg pt-20 min-h-screen z-40 bg-slate-100/98 dark:bg-gray-950/98 backdrop-blur-[6px] p-6 overflow-y-auto"
               >
                 {/* Nav links */}
                 <nav className="flex flex-col space-y-4 mb-6">
@@ -284,6 +299,23 @@ const Header = () => {
                       {item.title}
                     </NavLink>
                   ))}
+                  <h1 className="text-xl font-extralight py-2 px-4 rounded hover:bg-gray-400 dark:hover:bg-gray-800 transition-colors text-gray-800 dark:text-gray-100">
+                    Category :
+                  </h1>
+
+                  {/* Category list - horizontal scroll */}
+                  <div className="flex overflow-x-auto space-x-2 px-4 py-2 scrollbar-thin">
+                    {tags.map((category) => (
+                      <Link
+                        key={category}
+                        to={`search?searchTerm=&tag=${category}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="whitespace-nowrap px-3 py-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-md text-sm"
+                      >
+                        {category}
+                      </Link>
+                    ))}
+                  </div>
 
                   <div className="self-center">
                     <ThemeTogglerButton />

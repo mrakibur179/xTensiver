@@ -53,7 +53,7 @@ const Home = () => {
   const otherPosts = posts.slice(0, 4);
 
   return (
-    <main className="bg-slate-200 dark:bg-slate-800">
+    <main className="bg-slate-200 dark:bg-slate-800 scroll-smooth">
       <div className="min-h-screen pt-16 text-gray-800 dark:text-gray-200 px-2 md:px-4 lg:px-6 p-2 container mx-auto">
         {/* Hero Section */}
         <section className="relative rounded-md dark:from-gray-800 dark:via-gray-900 dark:to-gray-950 text-gray-900 px-0 md:px-8 lg:px-16 dark:text-white overflow-hidden">

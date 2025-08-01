@@ -74,10 +74,15 @@
 
 /* ===== Tables ===== */
 .markdown-body table {
-  border-collapse: collapse;
-  width: 100%;
-  margin-bottom: 16px;
-  border: 1px solid #dfe2e5;
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  min-width: 100px;
 }
 
 .markdown-body table th,
@@ -188,12 +193,21 @@
 
 /* ===== Embedded Videos ===== */
 .markdown-body iframe {
-  display: block;
-  width: 100%;
+  width: 100% !important;
   max-width: 100%;
   aspect-ratio: 16 / 9;
-  margin: 1rem 0;
+  height: auto;
   border: none;
+  display: block;
+  margin: 1rem 0;
+}
+
+.markdown-body {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* for iOS smooth scroll */
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0); /* triggers GPU acceleration */
 }
 
 /* ===== Code Block Copy Button (Optional) ===== */
@@ -202,18 +216,35 @@
   margin-bottom: 16px;
 }
 
+.code-block-wrapper pre code {
+  background-color: transparent;
+  padding: 0;
+  color: black;
+}
+
 .code-copy-btn {
   position: absolute;
   top: 8px;
   right: 8px;
   padding: 4px 8px;
   font-size: 12px;
-  background-color: #e1e4e8;
+  background-color: #ffffff;
   border: 1px solid #d1d5da;
+  color: #161b22;
   border-radius: 4px;
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.2s;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.code-copy-btn:active {
+  transform: scale(0.98);
+}
+.code-copy-btn.copied {
+  background-color: #d1fae5;
+  color: #065f46;
 }
 
 .code-block-wrapper:hover .code-copy-btn {

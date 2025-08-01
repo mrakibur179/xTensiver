@@ -42,26 +42,64 @@ export const PostPage = () => {
       const copyBtn = document.createElement("button");
       copyBtn.className = "code-copy-btn";
       copyBtn.textContent = "Copy";
+      copyBtn.setAttribute("aria-label", "Copy code to clipboard");
+
+      // Add touch-specific attributes
+      copyBtn.setAttribute("role", "button");
+      copyBtn.setAttribute("tabindex", "0");
 
       pre.parentNode.insertBefore(wrapper, pre);
       wrapper.appendChild(pre);
       wrapper.appendChild(copyBtn);
 
-      copyBtn.addEventListener("click", () => {
+      const handleCopy = async () => {
         const code = pre.querySelector("code")?.textContent || "";
-        navigator.clipboard
-          .writeText(code)
-          .then(() => {
-            copyBtn.textContent = "Copied!";
-            copyBtn.classList.add("copied");
-            setTimeout(() => {
-              copyBtn.textContent = "Copy";
-              copyBtn.classList.remove("copied");
-            }, 2000);
-          })
-          .catch((err) => {
-            console.error("Failed to copy text: ", err);
-          });
+
+        try {
+          // Modern clipboard API with fallback
+          if (navigator.clipboard) {
+            await navigator.clipboard.writeText(code);
+          } else {
+            // Fallback for older browsers
+            const textarea = document.createElement("textarea");
+            textarea.value = code;
+            textarea.style.position = "fixed";
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+          }
+
+          // Visual feedback
+          copyBtn.textContent = "Copied!";
+          copyBtn.classList.add("copied");
+
+          setTimeout(() => {
+            copyBtn.textContent = "Copy";
+            copyBtn.classList.remove("copied");
+          }, 2000);
+        } catch (err) {
+          console.error("Copy failed:", err);
+          copyBtn.textContent = "Error";
+          setTimeout(() => {
+            copyBtn.textContent = "Copy";
+          }, 2000);
+        }
+      };
+
+      // Add both mouse and touch events
+      copyBtn.addEventListener("click", handleCopy);
+      copyBtn.addEventListener("touchend", (e) => {
+        e.preventDefault(); // Prevent mouse event emulation
+        handleCopy();
+      });
+
+      // For keyboard accessibility
+      copyBtn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleCopy();
+        }
       });
     });
   };
